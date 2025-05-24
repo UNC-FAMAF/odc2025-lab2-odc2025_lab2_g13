@@ -31,7 +31,7 @@ loop0:
 	mov x9, GPIO_BASE
 
 	// Atención: se utilizan registros w porque la documentación de broadcom
-	// indica que los registros que estamos leyendo y escribiendo son de 32 bits
+	// indica que los registros que estamos leyendo y escribiendo son de 32 bits..
 
 	// Setea gpios 0 - 9 como lectura
 	str wzr, [x9, GPIO_GPFSEL0]
