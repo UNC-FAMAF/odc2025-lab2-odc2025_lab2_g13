@@ -51,7 +51,7 @@ loop0:
 	lsr w11, w11, 1
 
 	//---------------------------------------------------------------
-	// Infinite Loop
+	// Infinite Loop crea un loop infinito
 
 InfLoop:
 	b InfLoop
