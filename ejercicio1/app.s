@@ -133,6 +133,110 @@ loop0:
     mov x13, 55
     bl rombo
 
+   
+    // --------------------------
+    // Pintar rmbos
+    // --------------------------
+    // (Este es el código existente para el cartel)
+    mov x0, x20
+    mov x10, 0xdb22
+    movk x10, 0xf5, lsl 16
+    mov x11, 549
+    mov x12, 280
+    mov x13, 55
+    bl rombo
+
+    // -------------------------------------------------
+    // Dibujar a Cartman (Version trucha por el momento)
+    // -------------------------------------------------
+    
+    // Cuerpo (chaqueta roja)
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0xCC, lsl 16       // Color rojo Cartman
+    mov x11, 300                 // X position (ajustado para estar en la calle)
+    mov x12, 350                 // Y position (base, ajustado para estar sobre la nieve)
+    mov x13, 80                  // Ancho
+    mov x14, 100                 // Alto
+    bl rectangulo
+
+    // Cabeza (círculo/ovalado)
+    mov x0, x20
+    mov x10, 0xC69C              // Color piel
+    movk x10, 0xFF, lsl 16
+    mov x11, 340                 // X center (centrado sobre el cuerpo)
+    mov x12, 320                 // Y center (por encima del cuerpo)
+    mov x13, 30                  // Radio
+    bl rombo
+
+    // Gorro (triángulo amarillo)
+    mov x0, x20
+    mov x10, 0xE6D8              // Color amarillo
+    movk x10, 0xFF, lsl 16
+    mov x11, 340                 // X position (centrado sobre la cabeza)
+    mov x12, 290                 // Y position
+    mov x13, 20                  // Altura
+    bl triangulo
+
+    // Pompón del gorro (círculo rojo)
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0xCC, lsl 16       // Color rojo
+    mov x11, 340                 // X center
+    mov x12, 290                 // Y center
+    mov x13, 8                   // Radio pequeño
+    bl rombo
+
+    // Ojos (pequeños rectángulos negros)
+    mov x0, x20
+    mov x10, 0x0000              // Color negro
+    mov x11, 330                 // X position ojo izquierdo
+    mov x12, 315                 // Y position
+    mov x13, 5                   // Ancho
+    mov x14, 5                   // Alto
+    bl rectangulo
+    
+    mov x0, x20
+    mov x11, 345                 // X position ojo derecho
+    bl rectangulo
+
+    // Boca (rectángulo pequeño)
+    mov x0, x20
+    mov x10, 0x0000              // Color negro
+    mov x11, 335                 // X position
+    mov x12, 330                 // Y position
+    mov x13, 10                  // Ancho
+    mov x14, 3                   // Alto
+    bl rectangulo
+
+    // Brazos (rectángulos marrones)
+    mov x0, x20
+    mov x10, 0x4226              // Color marrón
+    movk x10, 0x8B, lsl 16
+    mov x11, 270                 // X position brazo izquierdo
+    mov x12, 370                 // Y position
+    mov x13, 30                  // Ancho
+    mov x14, 15                  // Alto
+    bl rectangulo
+    
+    mov x0, x20
+    mov x11, 380                 // X position brazo derecho
+    bl rectangulo
+
+    // Piernas (rectángulos azules)
+     mov x0, x20
+    mov x10, 0x33000000       // Color azul Cartman (0x00003300) - versión corregida
+    mov x11, 310              // X position pierna izquierda
+    mov x12, 450              // Y position (sobre la nieve)
+    mov x13, 20               // Ancho
+    mov x14, 30               // Alto
+    bl rectangulo
+    
+    mov x0, x20
+    mov x11, 350              // X position pierna derecha
+    bl rectangulo
+
+   
     // --------------------------
     // Loop infinito
     // --------------------------
@@ -301,4 +405,3 @@ x_loop_rombo_down:
     bgt y_loop_down
 
     ret
-
