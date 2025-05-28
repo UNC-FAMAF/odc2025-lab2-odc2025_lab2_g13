@@ -167,7 +167,7 @@ loop0:
     mov x11, 340                 // X center (centrado sobre el cuerpo)
     mov x12, 320                 // Y center (por encima del cuerpo)
     mov x13, 30                  // Radio
-    bl rombo
+    bl circulo
 
     // Gorro (triángulo amarillo)
     mov x0, x20
@@ -180,12 +180,12 @@ loop0:
 
     // Pompón del gorro (círculo rojo)
     mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0xCC, lsl 16       // Color rojo
+    mov x10, 0x0000              // Color rojo
+    movk x10, 0xFF, lsl 16
     mov x11, 340                 // X center
     mov x12, 290                 // Y center
     mov x13, 8                   // Radio pequeño
-    bl rombo
+    bl circulo
 
     // Ojos (pequeños rectángulos negros)
     mov x0, x20
@@ -194,7 +194,7 @@ loop0:
     mov x12, 315                 // Y position
     mov x13, 5                   // Ancho
     mov x14, 5                   // Alto
-    bl rectangulo
+    bl circulo
     
     mov x0, x20
     mov x11, 345                 // X position ojo derecho
@@ -309,7 +309,7 @@ x_loop_tr:
     lsl x7, x7, 2                // offset_x = x_actual * 4
 
     // Dirección: framebuffer + offset_y + offset_x
-    add x8, x0, x4
+    add x8, x20, x4
     add x8, x8, x7
 
     // Pintar píxel
@@ -355,7 +355,7 @@ x_loop_rombo_up:
     add x8, x7, #0
     lsl x8, x8, 2               // offset_x
 
-    add x9, x0, x5
+    add x9, x20, x5
     add x9, x9, x8              // dirección del píxel
 
     stur w10, [x9]              // pintar píxel
@@ -391,7 +391,7 @@ x_loop_rombo_down:
     add x8, x7, #0
     lsl x8, x8, 2               // offset_x
 
-    add x9, x0, x5
+    add x9, x20, x5
     add x9, x9, x8              // dirección del píxel
 
     stur w10, [x9]
@@ -403,5 +403,53 @@ x_loop_rombo_down:
     sub x2, x2, #1
     cmp x2, #-1
     bgt y_loop_down
+
+    ret
+
+circulo:
+    // Calculamos radio² para comparaciones
+    mul x17, x13, x13  // radio^2
+
+    // Calculamos el stride (bytes por fila)
+    mov x15, SCREEN_WIDTH
+    lsl x15, x15, 2  // stride = SCREEN_WIDTH * 4 (bytes por fila)
+
+    // Definimos límites para iteración
+    sub x1, x12, x13  // y_start = yc - r
+    add x18, x12, x13 // y_end = yc + r
+
+loop_y:
+    sub x2, x11, x13  // x_start = xc - r
+    add x19, x11, x13 // x_end = xc + r
+
+loop_x:
+    // Calculamos dx² y dy²
+    sub x3, x2, x11
+    sub x4, x1, x12
+    mul x5, x3, x3
+    mul x6, x4, x4
+    add x7, x5, x6  // dist² = dx² + dy²
+
+    // Si dist² ≤ radio², pintamos el píxel
+    cmp x7, x17
+    bgt skip_pixel
+
+    // Calculamos dirección en framebuffer
+    mul x9, x1, x15  // offset_y = y * stride
+    lsl x16, x2, 2   // offset_x = x * 4
+    add x9, x9, x16
+    add x9, x9, x20
+
+    // Pintamos el píxel
+    stur w10, [x9]
+
+skip_pixel:
+    add x2, x2, 1
+    cmp x2, x19
+    ble loop_x
+
+    add x1, x1, 1
+    cmp x1, x18
+    ble loop_y
 
     ret
