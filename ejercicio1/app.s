@@ -146,6 +146,199 @@ loop0:
     mov x13, 55
     bl rombo
 
+    // DIBUJAR LAS LETRAS OdC2025 (no terminé de comentar todo)
+
+    // Este bloque pinta las letras OdC2025 con el color del asfalto
+    mov x10, 0x424d
+    movk x10, 0x4c, lsl 16
+
+    // Posición base de las letras en X e Y (para que queden centradas)
+    // Guardo en x19 las coords de la base horizontal 
+    // y en x16 las coords de la base vertical
+    movz x19, 208
+    movz x16, 50
+
+    //Las dibujo utilizando rectángulos que como dice mas arriba:
+
+    // OBSERVEMOS que La funcion rectangulo utiliza:
+
+    // x10 = Guarda el color del rectangulo. 
+    //Este se guardó al principo asi que no lo vovemos a guardar
+
+    // x11, x12 = Coordenadas del inicio.
+    // x13, x14 = Ancho y alto.
+    // Antes de llamar a la funcion debemos determinar estos valores.
+
+    // Dibujo la letra O:
+    // Comienzo con las líneas horizontales superior e inferior
+    movz x13, 40   // determino que el ancho es 5*8, es decir 5 bloques de 8px => 40
+    movz x14, 8    // el ancho es 1*8, es decir un bloque de 8px => 8
+
+    // ahora guardo las coords de la base en los parametros de inicio
+    mov x11, x19   
+    mov x12, x16
+    bl rectangulo  // dibuja la linea superior
+
+    mov x11, x19
+    add x12, x16, #48
+    bl rectangulo  // línea inferior
+
+    // Ahora paso a las líneas verticales izquierda y derecha
+    movz x13, 8
+    movz x14, 48
+    mov x11, x19
+    add x12, x16, #8
+    bl rectangulo  // vertical izquierda
+
+    add x11, x19, #32
+    bl rectangulo  // vertical derecha
+
+    // aca dibujo la letra d haciendo una vertical y un cuadrado
+
+    // Hago los bordes horizontales del cuadrado
+    movz x13, 24
+    movz x14, 8
+    mov x11, #256 //uso coords absolutas
+    mov x12, #66
+    bl rectangulo  // borde de arriba
+
+    mov x11, #256
+    mov x12, #90
+    bl rectangulo  // borde de abajo
+
+    // Ahora los lados verticales del cuadrado
+    movz x13, 8
+    movz x14, 24
+    mov x11, #256
+    mov x12, #66
+    bl rectangulo  // lado izq
+
+    mov x11, #272
+    mov x12, #66
+    bl rectangulo  // lado derecho
+
+    // Finalmente, agrego el palo de la derecha
+    movz x13, 8
+    movz x14, 56
+    mov x11, #280
+    mov x12, #50
+    bl rectangulo
+
+    // Letra C
+    add x15, x19, #96
+    movz x13, 40
+    movz x14, 8
+    mov x11, x15
+    mov x12, x16
+    bl rectangulo  // parte superior
+
+    add x12, x16, #48
+    bl rectangulo  // parte inferior
+
+    movz x13, 8
+    movz x14, 48
+    mov x11, x15
+    mov x12, x16
+    add x11, x15, #304
+    add x12, x12, #4
+    bl rectangulo  // lateral izquierdo
+
+    // Número 2 (primero)
+    add x15, x19, #144
+    movz x13, 40
+    movz x14, 8
+    mov x11, x15
+    mov x12, x16
+    bl rectangulo  // parte superior
+
+    add x12, x12, #24
+    bl rectangulo  // parte media
+
+    add x12, x12, #24
+    bl rectangulo  // parte inferior
+
+    movz x13, 8
+    movz x14, 24
+    add x11, x15, #384
+    add x12, x16, #4
+    bl rectangulo  // diagonal derecha
+
+    mov x11, x15
+    add x11, x15, #352
+    add x12, x16, #24
+    bl rectangulo  // diagonal izquierda
+
+    // Número 0
+    add x15, x19, #200
+    movz x13, 40
+    movz x14, 8
+    mov x11, x15
+    mov x12, x16
+    bl rectangulo  // parte superior
+
+    add x12, x16, #48
+    bl rectangulo  // parte inferior
+
+    movz x13, 8
+    movz x14, 48
+    mov x11, x15
+    add x11, x15, #408
+    add x12, x16, #4
+    bl rectangulo  // lateral izquierdo
+
+    add x11, x15, #440
+    bl rectangulo  // lateral derecho
+
+    // Segundo número 2 (idéntico al anterior)
+    add x15, x19, #248
+    movz x13, 40
+    movz x14, 8
+    mov x11, x15
+    mov x12, x16
+    bl rectangulo
+
+    add x12, x12, #24
+    bl rectangulo
+
+    add x12, x12, #24
+    bl rectangulo
+
+    movz x13, 8
+    movz x14, 24
+    add x11, x15, #488
+    add x12, x16, #4
+    bl rectangulo
+
+    mov x11, x15
+    add x11, x15, #456
+    add x12, x16, #24
+    bl rectangulo
+
+    // Número 5
+    movz x13, 40
+    movz x14, 8
+    mov x11, #504
+    mov x12, #50
+    bl rectangulo  // parte superior
+
+    mov x11, #504
+    mov x12, #74
+    bl rectangulo  // parte media
+
+    mov x11, #504
+    mov x12, #98
+    bl rectangulo  // parte inferior
+
+    movz x13, 8
+    movz x14, 24
+    mov x11, #504
+    mov x12, #58
+    bl rectangulo  // lateral izquierdo arriba
+
+    mov x11, #536
+    mov x12, #82
+    bl rectangulo  // lateral derecho abajo
+
     // -------------------------------------------------
     // Dibujar a Cartman (Version trucha por el momento)
     // -------------------------------------------------
