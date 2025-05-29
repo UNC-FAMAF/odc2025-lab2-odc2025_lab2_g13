@@ -310,93 +310,91 @@ loop0:
     bl rectangulo // vertical lado de la dercha
 
     // -------------------------------------------------
-    // Dibujar a Cartman (Version trucha por el momento)
+    // Dibujar a Cartman (un cachito mejorado)
     // -------------------------------------------------
     
-    // Cuerpo (chaqueta roja)
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0xCC, lsl 16       // Color rojo Cartman
-    mov x11, 300                 // X position (ajustado para estar en la calle)
-    mov x12, 350                 // Y position (base, ajustado para estar sobre la nieve)
-    mov x13, 80                  // Ancho
-    mov x14, 100                 // Alto
-    bl rectangulo
-
-    // Cabeza (círculo/ovalado)
+    // Cabeza (círculo piel)
     mov x0, x20
     mov x10, 0xC69C              // Color piel
     movk x10, 0xFF, lsl 16
-    mov x11, 340                 // X center (centrado sobre el cuerpo)
-    mov x12, 320                 // Y center (por encima del cuerpo)
+    mov x11, 340                 // X center 
+    mov x12, 320                 // Y center 
     mov x13, 30                  // Radio
     bl circulo
 
-    // Gorro (triángulo amarillo)
-    mov x0, x20
-    mov x10, 0xE6D8              // Color amarillo
-    movk x10, 0xFF, lsl 16
-    mov x11, 340                 // X position (centrado sobre la cabeza)
-    mov x12, 290                 // Y position
-    mov x13, 20                  // Altura
-    bl triangulo
-
-    // Pompón del gorro (círculo rojo)
+    // Gorro (triángulo rojo) 
     mov x0, x20
     mov x10, 0x0000              // Color rojo
-    movk x10, 0xFF, lsl 16
-    mov x11, 340                 // X center
-    mov x12, 290                 // Y center
-    mov x13, 8                   // Radio pequeño
+    movk x10, 0xCC, lsl 16
+    mov x11, 340                 // X position 
+    mov x12, 250                // Y position 
+    mov x13, 40                  // Altura 
+    bl triangulo
+
+    // Pompón (círculo blanco) 
+    mov x0, x20
+    mov x10, 0xFFFF              // Color blanco
+    movk x10, 0xFFFF, lsl 16
+    mov x11, 340                 // X centro 
+    mov x12, 240                // Y posicion más alta 
+    mov x13, 10                  // Radio un poco mayor 
     bl circulo
 
-    // Ojos (pequeños rectángulos negros)
+    // Cuerpo (chaqueta roja)
     mov x0, x20
-    mov x10, 0x0000              // Color negro
-    mov x11, 330                 // X position ojo izquierdo
-    mov x12, 315                 // Y position
-    mov x13, 5                   // Ancho
-    mov x14, 5                   // Alto
+    mov x10, 0x0000
+    movk x10, 0xCC, lsl 16
+    mov x11, 300
+    mov x12, 350
+    mov x13, 80
+    mov x14, 100
+    bl rectangulo
+
+    // Ojos y boca
+    mov x0, x20
+    mov x10, 0x0000
+    mov x11, 330
+    mov x12, 315
+    mov x13, 4
     bl circulo
     
+    mov x11, 350
+    bl circulo
+
+    // Boca (línea negra)
     mov x0, x20
-    mov x11, 345                 // X position ojo derecho
+    mov x10, 0x0000
+    mov x11, 335
+    mov x12, 330
+    mov x13, 20
+    mov x14, 2
     bl rectangulo
 
-    // Boca (rectángulo pequeño)
+    // Brazos
     mov x0, x20
-    mov x10, 0x0000              // Color negro
-    mov x11, 335                 // X position
-    mov x12, 330                 // Y position
-    mov x13, 10                  // Ancho
-    mov x14, 3                   // Alto
-    bl rectangulo
-
-    // Brazos (rectángulos marrones)
-    mov x0, x20
-    mov x10, 0x4226              // Color marrón
+    mov x10, 0x4226
     movk x10, 0x8B, lsl 16
-    mov x11, 270                 // X position brazo izquierdo
-    mov x12, 370                 // Y position
-    mov x13, 30                  // Ancho
-    mov x14, 15                  // Alto
+    mov x11, 270
+    mov x12, 370
+    mov x13, 30
+    mov x14, 15
     bl rectangulo
     
     mov x0, x20
-    mov x11, 380                 // X position brazo derecho
+    mov x11, 380
     bl rectangulo
 
-    // Piernas (rectángulos azules)
-     mov x0, x20
-    mov x10, 0x33000000       // Color azul Cartman (0x00003300) - versión corregida
-    mov x11, 310              // X position pierna izquierda
-    mov x12, 450              // Y position (sobre la nieve)
-    mov x13, 20               // Ancho
-    mov x14, 30               // Alto
+    // Piernas
+    mov x0, x20
+    mov x10, 0x33000000
+    mov x11, 310
+    mov x12, 450
+    mov x13, 20
+    mov x14, 30
     bl rectangulo
     
     mov x0, x20
-    mov x11, 350              // X position pierna derecha
+    mov x11, 350
     bl rectangulo
 
    
@@ -615,4 +613,113 @@ skip_pixel:
     cmp x1, x18
     ble loop_y
 
+    ret
+
+elipse:
+    // x11 = x_center, x12 = y_center
+    // x13 = a (radio horizontal), x14 = b (radio vertical)
+    // Guardar parámetros
+    mov x19, x11  // Centro X
+    mov x20, x12  // Centro Y
+    mov x21, x13  // a
+    mov x22, x14  // b
+    
+    // Precalcular a² y b²
+    mul x23, x21, x21  // a²
+    mul x24, x22, x22  // b²
+    
+    // Calcular stride
+    mov x15, SCREEN_WIDTH
+    lsl x15, x15, 2  // stride = SCREEN_WIDTH * 4
+    
+    // Iterar sobre el cuadrante positivo (luego reflejamos)
+    mov x1, #0       // x
+    mov x2, x22      // y = b
+    
+elipse_loop:
+    // Calcular condición: b²x² + a²y² <= a²b²
+    mul x3, x1, x1   // x²
+    mul x3, x3, x24  // b²x²
+    
+    mul x4, x2, x2   // y²
+    mul x4, x4, x23  // a²y²
+    
+    add x5, x3, x4   // b²x² + a²y²
+    
+    mul x6, x23, x24 // a²b²
+    
+    cmp x5, x6
+    b.gt elipse_next
+    
+    // Dibujar los 4 puntos simétricos
+    // Punto (x,y)
+    add x7, x19, x1
+    add x8, x20, x2
+    bl draw_pixel
+    
+    // Punto (-x,y)
+    sub x7, x19, x1
+    add x8, x20, x2
+    bl draw_pixel
+    
+    // Punto (x,-y)
+    add x7, x19, x1
+    sub x8, x20, x2
+    bl draw_pixel
+    
+    // Punto (-x,-y)
+    sub x7, x19, x1
+    sub x8, x20, x2
+    bl draw_pixel
+    
+elipse_next:
+    // Algoritmo del punto medio para elipses
+    // (Implementación simplificada)
+    add x1, x1, #1
+    cmp x1, x21
+    b.gt elipse_done
+    
+    // Calcular siguiente y
+    mul x3, x1, x1
+    mul x3, x3, x24
+    mul x4, x2, x2
+    mul x4, x4, x23
+    add x5, x3, x4
+    mul x6, x23, x24
+    
+    sub x5, x5, x6
+    cmp x5, #0
+    b.gt elipse_decrease_y
+    
+    b elipse_loop
+    
+elipse_decrease_y:
+    sub x2, x2, #1
+    b elipse_loop
+    
+elipse_done:
+    ret
+
+draw_pixel:
+    // x7 = x, x8 = y, x10 = color
+    // Verificar límites de pantalla
+    cmp x7, #0
+    b.lt pixel_done
+    cmp x7, SCREEN_WIDTH
+    b.ge pixel_done
+    cmp x8, #0
+    b.lt pixel_done
+    cmp x8, SCREEN_HEIGH
+    b.ge pixel_done
+    
+    // Calcular dirección del píxel
+    mul x9, x8, x15  // y * stride
+    lsl x16, x7, 2   // x * 4
+    add x9, x9, x16
+    add x9, x9, x20  // framebuffer base
+    
+    // Pintar píxel
+    stur w10, [x9]
+    
+pixel_done:
     ret
