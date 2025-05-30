@@ -67,6 +67,18 @@ loop0:
     // x13, x14 = Ancho y alto.
     // Antes de llamar a la funcion debemos determinar estos valores.
 
+
+//SOL
+    mov x0, x20
+    mov x10, 0xFFFF00           // Color piel
+    mov x11, 5000                 // X center 
+    mov x12, 40              // Y center 
+    mov x13, 30                  // Radio
+    mov x14,0
+    bl circulo
+
+
+
     //Piso
     mov x0, x20                  
     mov x10, 0x424d
@@ -146,7 +158,7 @@ loop0:
     mov x13, 55
     bl rombo
 
-   // DIBUJAR LAS LETRAS OdC2025 (no terminé de comentar todo)
+// DIBUJAR LAS LETRAS OdC2025 (no terminé de comentar todo)
 
     // Este bloque pinta las letras OdC2025 con el color del asfalto
     mov x10, 0x424d
@@ -170,7 +182,7 @@ loop0:
     // Dibujo la letra O:
     // Comienzo con las líneas horizontales superior e inferior
 
-    // LETRA O
+// LETRA O
     movz x13, 10 // determino que el ancho es 5*2, es decir 5 bloques de 2px => 10
     movz x14, 2 // el ancho es 1*2, es decir un bloque de 2px => 2
     
@@ -189,7 +201,7 @@ loop0:
     mov x11, #518
     bl rectangulo
 
-   // LETRA d
+// LETRA d
 
     movz x13, 6   // ancho panza
     movz x14, 6   // alto panza
@@ -204,7 +216,7 @@ loop0:
     bl rectangulo
 
 
-    // LETRA C
+// LETRA C
 
     movz x13, 10  // horizontal arriba
     movz x14, 2
@@ -221,7 +233,7 @@ loop0:
     mov x12, #278
     bl rectangulo
 
-    // NUMERO 2
+// NUMERO 2
 
     movz x13, 10
     movz x14, 2
@@ -245,7 +257,7 @@ loop0:
     mov x12, #282
     bl rectangulo // diagonal izquierda
 
-    // NUMERO 0
+// NUMERO 0
 
     movz x13, 10
     movz x14, 2
@@ -265,7 +277,7 @@ loop0:
     mov x11, #568
     bl rectangulo // lateral der
 
-    // SEGUNDO 2 (igual al anterior con coords distintas)
+// SEGUNDO 2 (igual al anterior con coords distintas)
 
     movz x13, 10
     movz x14, 2
@@ -287,7 +299,7 @@ loop0:
     mov x12, #282
     bl rectangulo
 
-    // NUMERO 5
+ // NUMERO 5
 
     movz x13, 10
     movz x14, 2
@@ -313,94 +325,257 @@ loop0:
     // Dibujar a Cartman (un cachito mejorado)
     // -------------------------------------------------
 
-    
-        
-    // Cabeza (círculo piel)
+
+//---------------------------------------------//
+//         STAN SOUTH PARK                    //
+//-------------------------------------------//
+
+
+// ABRIGO (chaqueta roja)
+    mov x0, x20
+    mov x10, 0x4226
+    movk x10, 0x8B, lsl 16
+    mov x11, 308 //x
+    mov x12, 340 //y
+    mov x13, 80 //a
+    mov x14, 80 //b
+    bl rectangulo
+
+
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 345 //x
+    mov x12, 340 //y
+    mov x13, 2 //a
+    mov x14, 80 //b
+    bl rectangulo
+
+
+//BUFANDA
+    mov x0, x20
+    mov x10, 0xCC0000
+    mov x11, 345                 // X  
+    mov x12, 315               // Y  
+    mov x13, 40                // Radio
+    mov x14,2
+    bl circulo
+
+
+// Cabeza (círculo piel)
     mov x0, x20
     mov x10, 0xC69C              // Color piel
     movk x10, 0xFF, lsl 16
-    mov x11, 340                 // X center 
-    mov x12, 320                 // Y center 
-    mov x13, 30                  // Radio
+    mov x11, 345                 // X  
+    mov x12, 300                // Y  
+    mov x13, 45                 // Radio
+    mov x14,0
     bl circulo
 
 
-
-    // Gorro (triángulo rojo) 
-    mov x0, x20
-    mov x10, 0x0000              // Color rojo
-    movk x10, 0xCC, lsl 16
-    mov x11, 340                 // X position 
-    mov x12, 270              // Y position 
-    mov x13, 40                  // Altura 
-    bl triangulo
-
-    // Pompón (círculo blanco) 
-    mov x0, x20
-    mov x10, 0xFFFF              // Color blanco
-    movk x10, 0xFFFF, lsl 16
-    mov x11, 340                 // X centro 
-    mov x12, 270                // Y posicion más alta 
-    mov x13, 10                  // Radio un poco mayor 
+//GORRO 
+    mov x0, x20 
+    mov x10, 0x0000CC
+    mov x11, 345
+    mov x12, 290
+    mov x13, 45
+    mov x14, 1
     bl circulo
 
-    // Cuerpo (chaqueta roja)
+    mov x0, x20
+    mov x10, 0xC69C              // Color piel
+    movk x10, 0xFF, lsl 16
+    mov x11, 301
+    mov x12, 285
+    mov x13, 89
+    mov x14, 25
+    bl rectangulo
+
+    mov x0, x20
+    mov x10, 0xCC0000
+    mov x11, 300
+    mov x12, 275
+    mov x13, 90
+    mov x14, 10
+    bl rectangulo
+
+
+// Pompón (círculo blanco) 
+    mov x0, x20
+    mov x10, 0xCC0000
+    mov x11, 345                 // X  
+    mov x12, 245              // Y pos más alta 
+    mov x13, 10               // Radio un poco mayor 
+    mov x14,0
+    bl circulo
+
+ // Piernas
+    mov x0, x20
+    mov x10, 0x0000CC
+    mov x11, 305
+    mov x12, 420
+    mov x13, 40
+    mov x14, 20
+    bl rectangulo
+    
+    mov x0, x20
+    mov x11, 350
+    bl rectangulo
+
+//Zapatos
     mov x0, x20
     mov x10, 0x0000
-    movk x10, 0xCC, lsl 16
-    mov x11, 340 //x
-    mov x12, 400 //y
-    mov x13, 45 //a
-    mov x14, 52 //b
+    movk x10, 0x00, lsl 16
+    mov x11, 325 //x
+    mov x12, 440 //y
+    mov x13, 25//a
+    mov x14, 6 //b
     bl elipse
 
-    // Ojos y boca
     mov x0, x20
-    mov x10, 0x0000
-    mov x11, 330
-    mov x12, 315
-    mov x13, 4
+    mov x11, 370
+    bl elipse
+
+
+
+  
+
+//CONTORNO OJOS 
+
+    mov x0, x20
+    mov x10, 0x000000
+    mov x11, 335
+    mov x12, 300
+    mov x13, 15
+    mov x14,0
     bl circulo
     
-    mov x11, 350
+    mov x11, 355
+    mov x14,0
     bl circulo
 
-    // Boca (línea negra)
+//FONDO OJOS
+
+    mov x0, x20
+    mov x10, 0xFFFFFF
+    mov x11, 335
+    mov x12, 300
+    mov x13, 14
+    mov x14,0
+    bl circulo
+    
+    mov x11, 355
+    mov x14,0
+    bl circulo
+
+//COLOR OJO
+
+    mov x0, x20
+    mov x10, 0x000000
+    mov x11, 335
+    mov x12, 300
+    mov x13, 4
+    mov x14,0
+    bl circulo
+
+    mov x0, x20
+    mov x11, 355
+    mov x14,0
+    bl circulo
+
+
+
+
+// Boca (línea negra)
     mov x0, x20
     mov x10, 0x0000
     mov x11, 335
-    mov x12, 330
+    mov x12, 325
     mov x13, 20
     mov x14, 2
     bl rectangulo
 
-    // Brazos
+
+//CONTORNO Brazos
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 305 // x
+    mov x12, 378 // y 
+    mov x13, 14
+    mov x14, 41
+    bl elipse
+    
+    mov x0, x20
+    mov x11, 385
+    bl elipse
+
+
+// Brazos
     mov x0, x20
     mov x10, 0x4226
     movk x10, 0x8B, lsl 16
-    mov x11, 270
-    mov x12, 370
-    mov x13, 30
-    mov x14, 15
-    bl rectangulo
+    mov x11, 305 // x
+    mov x12, 378 // y 
+    mov x13, 13
+    mov x14, 40
+    bl elipse
     
     mov x0, x20
-    mov x11, 380
-    bl rectangulo
+    mov x11, 385
+    bl elipse
 
-    // Piernas
-    mov x0, x20
-    mov x10, 0x33000000
+//MANOS 
+    mov x0, x20 
+    mov x10, 0x0000
+    movk x10, 0xCC, lsl 16 
+    mov x11, 305
+    mov x12, 410
+    mov x13, 10
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    mov x11, 385
+    mov x14,0
+    bl circulo
+
+//CONTORNO DEDO
+
+    mov x0, x20 
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16 
     mov x11, 310
-    mov x12, 450
-    mov x13, 20
-    mov x14, 30
-    bl rectangulo
-    
-    mov x0, x20
-    mov x11, 350
-    bl rectangulo
+    mov x12, 410
+    mov x13, 6
+    mov x14,0
+    bl circulo
 
+    mov x0, x20 
+    mov x11, 380
+    mov x14, 0
+    bl circulo
+
+
+// DEDO
+
+    mov x0, x20 
+    mov x10, 0x0000
+    movk x10, 0xCC, lsl 16 
+    mov x11, 310
+    mov x12, 410
+    mov x13, 5
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    mov x11, 380
+    mov x14,0
+    bl circulo
+
+ 
+
+   
    
     // --------------------------
     // Loop infinito
@@ -571,52 +746,122 @@ x_loop_rombo_down:
 
     ret
 
+
+
 circulo:
-    // Calculamos radio² para comparaciones
-    mul x17, x13, x13  // radio^2
 
-    // Calculamos el stride (bytes por fila)
-    mov x15, SCREEN_WIDTH
-    lsl x15, x15, 2  // stride = SCREEN_WIDTH * 4 (bytes por fila)
+//Registro x14 indica el modo en el que se desea pintar el circulo 
 
-    // Definimos límites para iteración
-    sub x1, x12, x13  // y_start = yc - r
-    add x18, x12, x13 // y_end = yc + r
+    stp x1, x2, [sp, #-16]!
+    stp x3, x4, [sp, #-16]!
+    stp x5, x6, [sp, #-16]!
+    stp x7, x8, [sp, #-16]!
+    stp x9, x10, [sp, #-16]!
 
-loop_y:
-    sub x2, x11, x13  // x_start = xc - r
-    add x19, x11, x13 // x_end = xc + r
+    mov x1, -1 * 1000
+    neg x1, x13        // dx = -radio
 
-loop_x:
-    // Calculamos dx² y dy²
-    sub x3, x2, x11
-    sub x4, x1, x12
-    mul x5, x3, x3
-    mul x6, x4, x4
-    add x7, x5, x6  // dist² = dx² + dy²
+dx_loop:
+    cmp x1, x13
+    b.gt end_loop
 
-    // Si dist² ≤ radio², pintamos el píxel
-    cmp x7, x17
-    bgt skip_pixel
+    mov x2, -1 * 1000
+    neg x2, x13        // dy = -radio
 
-    // Calculamos dirección en framebuffer
-    mul x9, x1, x15  // offset_y = y * stride
-    lsl x16, x2, 2   // offset_x = x * 4
-    add x9, x9, x16
-    add x9, x9, x20
+dy_loop:
+    cmp x2, x13
+    b.gt inc_dx
 
-    // Pintamos el píxel
-    stur w10, [x9]
+    // Ver si está dentro del círculo: dx² + dy² <= r²
+    mul x3, x1, x1     // dx²
+    mul x4, x2, x2     // dy²
+    add x5, x3, x4
+    mul x6, x13, x13   // r²
+    cmp x5, x6
+    b.gt inc_dy        // fuera del círculo
 
-skip_pixel:
+    // Check de orientación (modo)
+    // Calculamos coordenadas relativas
+    // Si x14 == 1 (arriba) -> dy < 0
+    // Si x14 == 2 (abajo) -> dy >= 0
+    // Si x14 == 3 (izquierda) -> dx < 0
+    // Si x14 == 4 (derecha) -> dx >= 0
+
+    cmp x14, #0
+    beq pintar
+
+    cmp x14, #1        // arriba
+    beq check_arriba
+
+    cmp x14, #2        // abajo
+    beq check_abajo
+
+    cmp x14, #3        // izq
+    beq check_izq
+
+    cmp x14, #4        // der
+    beq check_der
+    
+    b inc_dy           // valor inválido
+
+check_arriba:
+    cmp x2, #0        // dy < 0
+    b.lt pintar
+    b inc_dy
+
+
+check_abajo:
+    cmp x2, #0
+    b.ge pintar
+    b inc_dy
+
+check_izq:
+    cmp x1, #0
+    b.lt pintar
+    b inc_dy
+
+check_der:
+    cmp x1, #0
+    b.ge pintar
+    b inc_dy
+
+pintar:
+    add x7, x11, x1     // x = x_center + dx
+    add x8, x12, x2     // y = y_center + dy
+
+    // Si el pixel está fuera de la pantalla, no pintar
+    cmp x7, #0
+    blt inc_dy
+    cmp x7, #SCREEN_WIDTH
+    b.ge inc_dy
+    cmp x8, #0
+    blt inc_dy
+    cmp x8, #SCREEN_HEIGH
+    b.ge inc_dy
+
+    // Calcular offset
+    mov x9, SCREEN_WIDTH
+    mul x9, x8, x9      // y * SCREEN_WIDTH
+    add x9, x9, x7      // + x
+    lsl x9, x9, #2      // * 4 bytes por píxel
+
+    add x9, x0, x9
+    str w10, [x9]
+
+inc_dy:
     add x2, x2, 1
-    cmp x2, x19
-    ble loop_x
+    b dy_loop
 
+inc_dx:
     add x1, x1, 1
-    cmp x1, x18
-    ble loop_y
+    b dx_loop
 
+end_loop:
+    ldp x9, x10, [sp], #16
+    ldp x7, x8, [sp], #16
+    ldp x5, x6, [sp], #16
+    ldp x3, x4, [sp], #16
+    ldp x1, x2, [sp], #16
     ret
 
 elipse:
