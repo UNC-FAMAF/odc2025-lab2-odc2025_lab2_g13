@@ -357,18 +357,18 @@ loop0:
 
     // Broche mas alto
     mov x11, 344             // X a la izquierda del cierre
-    mov x12, 355             // Y cerca de la zona del broche alto
-    mov x14, 0               // Ciruclo completo 
+    mov x12, 365             // Y bajado para evitar la bufanda
+    mov x14, 0               
     bl circulo
 
     // Broche del medio
     mov x11, 344
-    mov x12, 380
+    mov x12, 390
     bl circulo
 
     // Broche mas bajo 
     mov x11, 344
-    mov x12, 405
+    mov x12, 415
     bl circulo
 
 
