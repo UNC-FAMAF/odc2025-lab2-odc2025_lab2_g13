@@ -133,7 +133,7 @@ loop0:
     mov x13, 55
     bl rombo
 
-   
+
     // --------------------------
     // Pintar rmbos
     // --------------------------
@@ -312,7 +312,9 @@ loop0:
     // -------------------------------------------------
     // Dibujar a Cartman (un cachito mejorado)
     // -------------------------------------------------
+
     
+        
     // Cabeza (círculo piel)
     mov x0, x20
     mov x10, 0xC69C              // Color piel
@@ -322,12 +324,14 @@ loop0:
     mov x13, 30                  // Radio
     bl circulo
 
+
+
     // Gorro (triángulo rojo) 
     mov x0, x20
     mov x10, 0x0000              // Color rojo
     movk x10, 0xCC, lsl 16
     mov x11, 340                 // X position 
-    mov x12, 250                // Y position 
+    mov x12, 270              // Y position 
     mov x13, 40                  // Altura 
     bl triangulo
 
@@ -336,7 +340,7 @@ loop0:
     mov x10, 0xFFFF              // Color blanco
     movk x10, 0xFFFF, lsl 16
     mov x11, 340                 // X centro 
-    mov x12, 240                // Y posicion más alta 
+    mov x12, 270                // Y posicion más alta 
     mov x13, 10                  // Radio un poco mayor 
     bl circulo
 
@@ -344,11 +348,11 @@ loop0:
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0xCC, lsl 16
-    mov x11, 300
-    mov x12, 350
-    mov x13, 80
-    mov x14, 100
-    bl rectangulo
+    mov x11, 340 //x
+    mov x12, 400 //y
+    mov x13, 45 //a
+    mov x14, 52 //b
+    bl elipse
 
     // Ojos y boca
     mov x0, x20
@@ -616,110 +620,64 @@ skip_pixel:
     ret
 
 elipse:
-    // x11 = x_center, x12 = y_center
-    // x13 = a (radio horizontal), x14 = b (radio vertical)
-    // Guardar parámetros
-    mov x19, x11  // Centro X
-    mov x20, x12  // Centro Y
-    mov x21, x13  // a
-    mov x22, x14  // b
-    
-    // Precalcular a² y b²
-    mul x23, x21, x21  // a²
-    mul x24, x22, x22  // b²
-    
-    // Calcular stride
-    mov x15, SCREEN_WIDTH
-    lsl x15, x15, 2  // stride = SCREEN_WIDTH * 4
-    
-    // Iterar sobre el cuadrante positivo (luego reflejamos)
-    mov x1, #0       // x
-    mov x2, x22      // y = b
-    
-elipse_loop:
-    // Calcular condición: b²x² + a²y² <= a²b²
-    mul x3, x1, x1   // x²
-    mul x3, x3, x24  // b²x²
-    
-    mul x4, x2, x2   // y²
-    mul x4, x4, x23  // a²y²
-    
-    add x5, x3, x4   // b²x² + a²y²
-    
-    mul x6, x23, x24 // a²b²
-    
-    cmp x5, x6
-    b.gt elipse_next
-    
-    // Dibujar los 4 puntos simétricos
-    // Punto (x,y)
-    add x7, x19, x1
-    add x8, x20, x2
-    bl draw_pixel
-    
-    // Punto (-x,y)
-    sub x7, x19, x1
-    add x8, x20, x2
-    bl draw_pixel
-    
-    // Punto (x,-y)
-    add x7, x19, x1
-    sub x8, x20, x2
-    bl draw_pixel
-    
-    // Punto (-x,-y)
-    sub x7, x19, x1
-    sub x8, x20, x2
-    bl draw_pixel
-    
-elipse_next:
-    // Algoritmo del punto medio para elipses
-    // (Implementación simplificada)
-    add x1, x1, #1
-    cmp x1, x21
-    b.gt elipse_done
-    
-    // Calcular siguiente y
-    mul x3, x1, x1
-    mul x3, x3, x24
-    mul x4, x2, x2
-    mul x4, x4, x23
-    add x5, x3, x4
-    mul x6, x23, x24
-    
-    sub x5, x5, x6
-    cmp x5, #0
-    b.gt elipse_decrease_y
-    
-    b elipse_loop
-    
-elipse_decrease_y:
-    sub x2, x2, #1
-    b elipse_loop
-    
-elipse_done:
-    ret
+    // x11 = xc (centro x)
+    // x12 = yc (centro y)
+    // x13 = a (radio horizontal)
+    // x14 = b (radio vertical)
+    // x20 = framebuffer base
+    // w10 = color (32 bits)
 
-draw_pixel:
-    // x7 = x, x8 = y, x10 = color
-    // Verificar límites de pantalla
-    cmp x7, #0
-    b.lt pixel_done
-    cmp x7, SCREEN_WIDTH
-    b.ge pixel_done
-    cmp x8, #0
-    b.lt pixel_done
-    cmp x8, SCREEN_HEIGH
-    b.ge pixel_done
-    
-    // Calcular dirección del píxel
-    mul x9, x8, x15  // y * stride
-    lsl x16, x7, 2   // x * 4
-    add x9, x9, x16
-    add x9, x9, x20  // framebuffer base
-    
-    // Pintar píxel
-    stur w10, [x9]
-    
-pixel_done:
+    // Calcular stride (bytes por fila)
+    mov x15, SCREEN_WIDTH
+    lsl x15, x15, 2        // stride = SCREEN_WIDTH * 4 bytes
+
+    // Calcular a² y b² para la ecuación de la elipse
+    mul x16, x13, x13      // a²
+    mul x17, x14, x14      // b²
+
+    // Inicializar variables para iterar x de -a a a
+    neg x1, x13            // x = -a
+
+elipse_x_loop:
+    // Precalcular b²*x²
+    mul x18, x1, x1        // x²
+    mul x18, x18, x17      // b² * x²
+
+    mov x2, x14            // y = -b (inicial)
+    neg x2, x2
+
+elipse_y_loop:
+    // Precalcular a²*y²
+    mul x19, x2, x2        // y²
+    mul x19, x19, x16      // a² * y²
+
+    // Sumar b²*x² + a²*y²
+    add x26, x18, x19      // ✅ usar x26 en lugar de pisar x20
+
+    // Comparar con a²*b²
+    mul x21, x16, x17      // a²*b²
+    cmp x26, x21
+    bgt elipse_y_next      // Si está fuera de la elipse, no pinta
+
+    // Calcular offset para pixel (xc + x, yc + y)
+    add x22, x12, x2       // y_actual = yc + y
+    mul x23, x22, x15      // offset_y = y_actual * stride
+
+    add x24, x11, x1       // x_actual = xc + x
+    lsl x24, x24, 2        // offset_x = x_actual * 4
+
+    add x25, x20, x23      // framebuffer + offset_y
+    add x25, x25, x24      // + offset_x
+
+    stur w10, [x25]        // pintar pixel
+
+elipse_y_next:
+    add x2, x2, 1
+    cmp x2, x14
+    ble elipse_y_loop
+
+    add x1, x1, 1
+    cmp x1, x13
+    ble elipse_x_loop
+
     ret
