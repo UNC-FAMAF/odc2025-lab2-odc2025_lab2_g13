@@ -342,14 +342,35 @@ loop0:
     bl rectangulo
 
 
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 345 //x
-    mov x12, 340 //y
-    mov x13, 2 //a
-    mov x14, 80 //b
+    // CIERRE Y BROCHES DEL ABRIGO 
+    mov x0, x20              // Empezamos con el cierre del abrigo
+    mov x10, 0x000000        // Negro
+    mov x11, 348             // Coordenada X centrada en el abrigo
+    mov x12, 340             // Coordenada Y igual a la del abrigo
+    mov x13, 2               // Ancho muy fino
+    mov x14, 80              // Alto igual al del abrigo
     bl rectangulo
+
+    mov x0, x20              // Empezamos con los broches
+    mov x10, 0x000000        // Color negro
+    mov x13, 3               // Radio pequeño
+
+    // Broche mas alto
+    mov x11, 344             // X a la izquierda del cierre
+    mov x12, 355             // Y cerca de la zona del broche alto
+    mov x14, 0               // Ciruclo completo 
+    bl circulo
+
+    // Broche del medio
+    mov x11, 344
+    mov x12, 380
+    bl circulo
+
+    // Broche mas bajo 
+    mov x11, 344
+    mov x12, 405
+    bl circulo
+
 
 
 //BUFANDA
@@ -897,7 +918,7 @@ elipse_y_loop:
     mul x19, x19, x16      // a² * y²
 
     // Sumar b²*x² + a²*y²
-    add x26, x18, x19      // ✅ usar x26 en lugar de pisar x20
+    add x26, x18, x19      // usar x26 en lugar de pisar x20
 
     // Comparar con a²*b²
     mul x21, x16, x17      // a²*b²
