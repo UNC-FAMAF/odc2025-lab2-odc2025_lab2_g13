@@ -31,6 +31,86 @@ loop0:
     sub x2, x2, 1                // Decrementar contador Y
     cbnz x2, loop1               // Si no es la última fila, salto
 
+
+//Nube 1
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 200
+    mov x12, 65
+    mov x13, 60
+    mov x14, 45
+    bl rectangulo
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 200
+    mov x12, 110
+    mov x13, 30
+    mov x14, 45
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 260
+    mov x12, 110
+    mov x13, 30
+    mov x14, 45
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 230
+    mov x12, 65
+    mov x13, 30
+    mov x14, 45
+    bl elipse
+
+//Nube 2
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 500
+    mov x12, 85
+    mov x13, 60
+    mov x14, 45
+    bl rectangulo
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 500
+    mov x12, 130
+    mov x13, 30
+    mov x14, 45
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 560
+    mov x12, 130
+    mov x13, 30
+    mov x14, 45
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 530
+    mov x12, 85
+    mov x13, 30
+    mov x14, 45
+    bl elipse
+
+
     // --------------------------
     // Pintar triangulos
     // --------------------------
@@ -66,16 +146,6 @@ loop0:
     // x11, x12 = Coordenadas del inicio.
     // x13, x14 = Ancho y alto.
     // Antes de llamar a la funcion debemos determinar estos valores.
-
-
-//SOL
-    mov x0, x20
-    mov x10, 0xFFFF00           // Color piel
-    mov x11, 5000                 // X center 
-    mov x12, 40              // Y center 
-    mov x13, 30                  // Radio
-    mov x14,0
-    bl circulo
 
 
 
@@ -457,12 +527,7 @@ loop0:
     mov x11, 370
     bl elipse
 
-
-
-  
-
 //CONTORNO OJOS 
-
     mov x0, x20
     mov x10, 0x000000
     mov x11, 335
@@ -476,7 +541,6 @@ loop0:
     bl circulo
 
 //FONDO OJOS
-
     mov x0, x20
     mov x10, 0xFFFFFF
     mov x11, 335
@@ -490,7 +554,6 @@ loop0:
     bl circulo
 
 //COLOR OJO
-
     mov x0, x20
     mov x10, 0x000000
     mov x11, 335
@@ -546,6 +609,22 @@ loop0:
     mov x11, 385
     bl elipse
 
+//borrar borde dentro del cuerpo 
+    mov x0, x20
+    mov x13, 16
+    mov x14, 40
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x11, 305
+    mov x13, 16
+    mov x14, 40
+    mov x15, 1
+    bl cuarto_elipse
+
+
+
 //MANOS 
     mov x0, x20 
     mov x10, 0x0000
@@ -594,10 +673,368 @@ loop0:
     mov x14,0
     bl circulo
 
- 
+//---------------------------------------------//
+//         La novia                           //
+//-------------------------------------------//
 
-   
-   
+// Pelo 
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 141
+    mov x12, 283
+    mov x13, 92
+    mov x14, 60
+    bl rectangulo
+
+// ABRIGO (campera violeta)
+    mov x0, x20
+    mov x10, 0x63b4
+    movk x10, 0xa2, lsl 16
+    mov x11, 150 //x
+    mov x12, 340 //y
+    mov x13, 80 //a
+    mov x14, 80 //b
+    bl rectangulo 
+
+// CIERRE Y BROCHES DEL ABRIGO 
+    mov x0, x20              // Empezamos con el cierre del abrigo
+    mov x10, 0x000000        // Negro
+    mov x11, 190             // Coordenada X centrada en el abrigo
+    mov x12, 340             // Coordenada Y igual a la del abrigo
+    mov x13, 2               // Ancho muy fino
+    mov x14, 80              // Alto igual al del abrigo
+    bl rectangulo
+
+    mov x0, x20              // Empezamos con los broches
+    mov x10, 0x000000        // Color negro
+    mov x13, 3               // Radio pequeño
+
+    // Broche mas alto
+    mov x11, 186             // X a la izquierda del cierre
+    mov x12, 365             // Y bajado para evitar la bufanda
+    mov x14, 0               
+    bl circulo
+
+    // Broche del medio
+    mov x11, 186
+    mov x12, 390
+    bl circulo
+
+    // Broche mas bajo 
+    mov x11, 186
+    mov x12, 415
+    bl circulo
+
+
+
+//BUFANDA
+    mov x0, x20
+    mov x10, 0x3957
+    movk x10, 0x38, lsl 16
+    mov x11, 187                // X  
+    mov x12, 315               // Y  
+    mov x13, 40                // Radio
+    mov x14,2
+    bl circulo
+
+
+// Cabeza (círculo piel)
+    mov x0, x20
+    mov x10, 0xd9b3            // Color piel
+    movk x10, 0xfb, lsl 16
+    mov x11, 187               // X  
+    mov x12, 300                // Y  
+    mov x13, 45                 // Radio
+    mov x14,0
+    bl circulo
+
+
+//Pelo sobre la cara    
+    //flequillo
+    mov x0, x20 
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 187
+    mov x12, 290
+    mov x13, 47
+    mov x14, 1
+    bl circulo
+
+    mov x0, x20
+    mov x10, 0xd9b3            // Color piel
+    movk x10, 0xfb, lsl 16
+    mov x11, 143
+    mov x12, 282
+    mov x13, 89
+    mov x14, 25
+    bl rectangulo
+
+    //mechon izquierdo 1
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 143
+    mov x12, 280
+    mov x13, 10
+    mov x14, 30
+    mov x15, 3
+    bl cuarto_elipse
+
+    //mechon izquierdo 2
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 153
+    mov x12, 280
+    mov x13, 10
+    mov x14, 10
+    mov x15, 3
+    bl cuarto_elipse
+
+    //mechon derecho 1
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 232
+    mov x12, 280
+    mov x13, 10
+    mov x14, 30
+    mov x15, 2
+    bl cuarto_elipse
+
+    //mechon derecho 2
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x11, 223
+    mov x12, 280
+    mov x13, 10
+    mov x14, 10
+    mov x15, 2
+    bl cuarto_elipse
+
+//Gorro 
+    mov x0, x20
+    mov x10, 0x87e9
+    movk x10, 0xfa, lsl 16
+    mov x11, 187
+    mov x12, 270
+    mov x13, 45
+    mov x14, 28
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0x87e9
+    movk x10, 0xfa, lsl 16
+    mov x11, 187
+    mov x12, 270
+    mov x13, 45
+    mov x14, 28
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0x2931
+    movk x10, 0x2c, lsl 16
+    mov x11, 187
+    mov x12, 250
+    mov x13, 10
+    mov x14, 5
+    bl elipse
+
+//CONTORNO Brazos
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 147 // x
+    mov x12, 378 // y 
+    mov x13, 14
+    mov x14, 41
+    bl elipse
+    
+    mov x0, x20
+    mov x11, 227
+    bl elipse
+
+
+// Brazos
+    mov x0, x20
+    mov x10, 0x63b4
+    movk x10, 0xa2, lsl 16
+    mov x11, 147 // x
+    mov x12, 378 // y 
+    mov x13, 13
+    mov x14, 40
+    bl elipse
+
+    mov x0, x20
+    mov x11, 227
+    bl elipse
+
+//borrar borde dentro del cuerpo 
+    mov x0, x20
+    mov x13, 16
+    mov x14, 40
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x11, 147
+    mov x13, 16
+    mov x14, 40
+    mov x15, 1
+    bl cuarto_elipse
+
+//CONTORNO OJOS 
+
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 177
+    mov x12, 300
+    mov x13, 15
+    mov x14,0
+    bl circulo
+    
+    mov x11, 197
+    mov x14,0
+    bl circulo
+
+//FONDO OJOS
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x11, 177
+    mov x12, 300
+    mov x13, 14
+    mov x14, 0
+    bl circulo
+    
+    mov x11, 197
+    mov x14, 0
+    bl circulo
+
+//COLOR OJO
+
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 177
+    mov x12, 300
+    mov x13, 2
+    mov x14, 0
+    bl circulo
+
+    mov x0, x20
+    mov x11, 197
+    mov x14,0
+    bl circulo
+
+// Sonrisa
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 187
+    mov x12, 328
+    mov x13, 12
+    mov x14, 6
+    bl elipse
+
+    
+    mov x0, x20
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16
+    mov x11, 187
+    mov x12, 328
+    mov x13, 10
+    mov x14, 4
+    bl elipse
+
+    mov x0, x20
+    mov x10, 0xd9b3
+    movk x10,  0xfb, lsl 16
+    mov x11, 175
+    mov x12, 322
+    mov x13, 25
+    mov x14, 8
+    bl rectangulo
+
+ // Vestido
+    mov x0, x20
+    mov x10, 0xdc05
+    movk x10, 0xfa, lsl 16
+    mov x11, 153
+    mov x12, 420
+    mov x13, 74
+    mov x14, 20
+    bl rectangulo
+    
+
+//Zapatos
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    mov x11, 167 //x
+    mov x12, 440 //y
+    mov x13, 25//a
+    mov x14, 6 //b
+    bl elipse
+
+    mov x0, x20
+    mov x11, 212
+    bl elipse
+
+//MANOS 
+    mov x0, x20 
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16 
+    mov x11, 147
+    mov x12, 410
+    mov x13, 10
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    mov x11, 227
+    mov x14, 0
+    bl circulo
+
+//CONTORNO DEDO
+
+    mov x0, x20 
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16 
+    mov x11, 152
+    mov x12, 410
+    mov x13, 6
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    mov x11, 222
+    mov x14, 0
+    bl circulo
+
+
+// DEDO
+
+    mov x0, x20 
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16 
+    mov x11, 152
+    mov x12, 410
+    mov x13, 5
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    mov x11, 222
+    mov x14, 0
+    bl circulo
+
     // --------------------------
     // Loop infinito
     // --------------------------
@@ -947,3 +1384,114 @@ elipse_y_next:
     ble elipse_x_loop
 
     ret
+
+cuarto_elipse:
+    // x11 = xc (centro x)
+    // x12 = yc (centro y)
+    // x13 = a (radio horizontal)
+    // x14 = b (radio vertical)
+    // x15 = cuarto (0 a 3)
+    // x20 = framebuffer base
+    // w10 = color (32 bits)
+
+    // Calcular stride (bytes por fila)
+    mov x16, SCREEN_WIDTH
+    lsl x16, x16, 2        // stride = SCREEN_WIDTH * 4 bytes
+
+    // Calcular a² y b² para la ecuación de la elipse
+    mul x17, x13, x13      // a²
+    mul x18, x14, x14      // b²
+
+    // Inicializar variables para iterar x de -a a a
+    neg x1, x13            // x = -a
+
+cuarto_elipse_x_loop:
+    // Precalcular b²*x²
+    mul x19, x1, x1        // x²
+    mul x19, x19, x18      // b² * x²
+
+    mov x2, x14            // y = -b (inicial)
+    neg x2, x2
+
+cuarto_elipse_y_loop:
+    // Precalcular a²*y²
+    mul x21, x2, x2        // y²
+    mul x21, x21, x17      // a² * y²
+
+    // Sumar b²*x² + a²*y²
+    add x22, x19, x21      // resultado de la ecuación
+
+    // Comparar con a²*b²
+    mul x23, x17, x18      // a²*b²
+    cmp x22, x23
+    bgt cuarto_elipse_y_next // Fuera de la elipse, no pinta
+
+    // Filtrar por cuarto:
+    // x < 0 → izquierda
+    // x >= 0 → derecha
+    // y < 0 → arriba
+    // y >= 0 → abajo
+
+    // Comprobar el cuarto
+    cmp x15, 0
+    beq check_0
+    cmp x15, 1
+    beq check_1
+    cmp x15, 2
+    beq check_2
+    cmp x15, 3
+    beq check_3
+    b cuarto_elipse_y_next  // Si x15 no es válido, salta
+
+check_0: // superior izquierda: x < 0 && y < 0
+    cmp x1, 0
+    bge cuarto_elipse_y_next
+    cmp x2, 0
+    bge cuarto_elipse_y_next
+    b pintar_pixel
+
+check_1: // superior derecha: x >= 0 && y < 0
+    cmp x1, 0
+    blt cuarto_elipse_y_next
+    cmp x2, 0
+    bge cuarto_elipse_y_next
+    b pintar_pixel
+
+check_2: // inferior izquierda: x < 0 && y >= 0
+    cmp x1, 0
+    bge cuarto_elipse_y_next
+    cmp x2, 0
+    blt cuarto_elipse_y_next
+    b pintar_pixel
+
+check_3: // inferior derecha: x >= 0 && y >= 0
+    cmp x1, 0
+    blt cuarto_elipse_y_next
+    cmp x2, 0
+    blt cuarto_elipse_y_next
+    // cae a pintar_pixel
+
+pintar_pixel:
+    // Calcular offset para pixel (xc + x, yc + y)
+    add x24, x12, x2       // y_actual = yc + y
+    mul x25, x24, x16      // offset_y = y_actual * stride
+
+    add x26, x11, x1       // x_actual = xc + x
+    lsl x26, x26, 2        // offset_x = x_actual * 4
+
+    add x27, x20, x25      // framebuffer + offset_y
+    add x27, x27, x26      // + offset_x
+
+    stur w10, [x27]        // pintar pixel
+
+cuarto_elipse_y_next:
+    add x2, x2, 1
+    cmp x2, x14
+    ble cuarto_elipse_y_loop
+
+    add x1, x1, 1
+    cmp x1, x13
+    ble cuarto_elipse_x_loop
+
+    ret
+
