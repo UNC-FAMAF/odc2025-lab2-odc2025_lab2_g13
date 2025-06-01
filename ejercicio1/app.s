@@ -8,6 +8,28 @@
 .globl main
 .global cuadrado 
 
+/*INSTRUCCIONES QUE NO SE ENCUENTRAN EN LA GREENCARD DE LEGv8:
+    (Usaremos los registros x1 y x2 como ejemplo)
+
+    neg: Niega el registro x2 y guarda el mismo en el registro x1, al igual que CMP, NEG es otra pseudoinstruccion, la cual es mov, hacer por ejemplo NEG x1, x13 es el equivalente a hacer NEG x1, -x13. En el programa fue utilizado para realizar desplazamientos desde el centro de una figura, por ejemplo, en la funcion circulo.
+
+    sp (Stack Pointer): Como su nombre lo dice, es el puntero a una pila, mas especificamente apunta al tope de la misma, es muy util para guardar y recuperar datos temporales cuando se llaman otras funciones, como en circulo por ejemplo. Es fundamental tambien para las instrucciones STP y LDP.
+
+    stp: Guarda 2 registros en memoria en donde apunta sp, y luego hace que sp reserve un espacio para poder ser actualizado. Normalmente es usado al entrar a una funcion para guardar los registros y usarlos para una dererminada funcion.
+
+    ldp: Carga los valores de 2 registros desde la direccion apuntada por sp en memoria y luego la actualiza hacia arriba. Normalmente es usado al salir de una funcion para restaurar el estado de los valores.
+
+    ACA UN EJEMPLO DE STP Y LDP TRABAJADOS EN CONJUNTO:
+    stp x1, x2, [sp, #-16]!   // Guarda los registros temporales que estan por usarse 
+  
+    (Codigo) 
+   
+    ldp x1, x2, [sp], #16     // Restaura los registros para que continuar con los valores que se usaban en el 
+                              // programa
+*/
+
+
+
 main:
     // x0 contiene la dirección base del framebuffer
     mov x20, x0  // Guarda la dirección base en x20 (preservado)
@@ -110,6 +132,88 @@ loop0:
     mov x14, 45
     bl elipse
 
+    // --------------------------
+    // Copos de nieve en el cielo (círculos blancos chicos)
+    // --------------------------
+    mov x0, x20
+    mov x10, 0xFFFFFF         // Color blanco
+    mov x13, 3                // Radio pequeño
+    mov x14, 0                // círculo completo
+
+    // Copo 1
+    mov x11, 90
+    mov x12, 60
+    bl circulo
+
+    // Copo 2
+    mov x11, 150
+    mov x12, 90
+    bl circulo
+
+    // Copo 3
+    mov x11, 220
+    mov x12, 50
+    bl circulo
+
+    // Copo 4
+    mov x11, 300
+    mov x12, 100
+    bl circulo
+
+    // Copo 5
+    mov x11, 380
+    mov x12, 70
+    bl circulo
+
+    // Copo 6
+    mov x11, 450
+    mov x12, 60
+    bl circulo
+
+    // Copo 7
+    mov x11, 530
+    mov x12, 90
+    bl circulo
+
+    // Copo 8
+    mov x11, 580
+    mov x12, 110
+    bl circulo
+
+    // Copo 9
+    mov x11, 60
+    mov x12, 30
+    bl circulo
+
+    // Copo 10
+    mov x11, 120
+    mov x12, 40
+    bl circulo
+
+    // Copo 11
+    mov x11, 180
+    mov x12, 20
+    bl circulo
+
+    // Copo 12
+    mov x11, 240
+    mov x12, 60
+    bl circulo
+
+    // Copo 13
+    mov x11, 310
+    mov x12, 40
+    bl circulo
+
+    // Copo 14
+    mov x11, 360
+    mov x12, 30
+    bl circulo
+
+    // Copo 15
+    mov x11, 420
+    mov x12, 20
+    bl circulo
 
     // --------------------------
     // Pintar triangulos
@@ -1494,4 +1598,3 @@ cuarto_elipse_y_next:
     ble cuarto_elipse_x_loop
 
     ret
-
