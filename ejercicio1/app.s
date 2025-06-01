@@ -254,17 +254,6 @@ loop0:
     bl rombo
 
 
-    // --------------------------
-    // Pintar rmbos
-    // --------------------------
-    // (Este es el código existente para el cartel)
-    mov x0, x20
-    mov x10, 0xdb22
-    movk x10, 0xf5, lsl 16
-    mov x11, 549
-    mov x12, 280
-    mov x13, 55
-    bl rombo
 
 // DIBUJAR LAS LETRAS OdC2025 (no terminé de comentar todo)
 
@@ -450,7 +439,7 @@ loop0:
     bl rectangulo
 
 
-    // CIERRE Y BROCHES DEL ABRIGO 
+// CIERRE Y BROCHES DEL ABRIGO 
     mov x0, x20              // Empezamos con el cierre del abrigo
     mov x10, 0x000000        // Negro
     mov x11, 348             // Coordenada X centrada en el abrigo
@@ -463,18 +452,18 @@ loop0:
     mov x10, 0x000000        // Color negro
     mov x13, 3               // Radio pequeño
 
-    // Broche mas alto
+// Broche mas alto
     mov x11, 344             // X a la izquierda del cierre
     mov x12, 365             // Y bajado para evitar la bufanda
     mov x14, 0               
     bl circulo
 
-    // Broche del medio
+// Broche del medio
     mov x11, 344
     mov x12, 390
     bl circulo
 
-    // Broche mas bajo 
+// Broche mas bajo 
     mov x11, 344
     mov x12, 415
     bl circulo
@@ -748,18 +737,18 @@ loop0:
     mov x10, 0x000000        // Color negro
     mov x13, 3               // Radio pequeño
 
-    // Broche mas alto
+// Broche mas alto
     mov x11, 186             // X a la izquierda del cierre
     mov x12, 365             // Y bajado para evitar la bufanda
     mov x14, 0               
     bl circulo
 
-    // Broche del medio
+// Broche del medio
     mov x11, 186
     mov x12, 390
     bl circulo
 
-    // Broche mas bajo 
+// Broche mas bajo 
     mov x11, 186
     mov x12, 415
     bl circulo
