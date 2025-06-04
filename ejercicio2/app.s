@@ -197,6 +197,92 @@ loop0:
     mov x14, 120
     bl rectangulo                  
 
+//---------------
+//COPOS DE NIEVE
+//---------------
+
+/*Notar que en el ejercicio 1 esta seccion era una funcion con un bl como llamada a la misma 
+esta vez no hubo otra opcion que agregarla como una seccion comun ya que como funcion causa problemas
+en la animacion*/  
+
+    stp x0, x1, [sp, #-16]!   // Guardar x0 y x1
+    stp x17, x19, [sp, #-16]!
+    stp x21, x22, [sp, #-16]!
+    stp x26, x27, [sp, #-16]!
+    stp x28, x29, [sp, #-16]!
+
+    mov x0, x20            // x0 = dirección base del framebuffer (pasada en x20)
+    mov x10, 0xFFFFFF      // x10 = color blanco (para los copos)
+    mov x13, 3             // x13 = radio del círculo (copos chicos)
+    mov x14, 0             // x14 = modo: 0 = círculo completo
+
+    mov x19, 0             // x19 = contador de copos generados
+    mov x21, 30            // x21 = cantidad total de copos que queremos generar
+
+    mov x17, 12345         // x17 = semilla pseudoaleatoria inicial
+
+    mov x26, #593          // x26 = número primo 1 (para dispersión en X)
+    mov x27, #37           // x27 = número primo 2 (para dispersión en Y)
+    mov x28, #97           // x28 = incremento de la semilla
+    mov x29, #2            // x29 = divisor para escalar valores a pantalla
+
+// ---------- Bucle principal que genera todos los copos ----------
+
+copos_loop:
+    // --------- Generar coordenada X pseudoaleatoria ---------
+    mov x22, x17           // x22 = copia de la semilla actual
+    mul x22, x22, x26      // x22 = x22 * 593 → dispersión
+    and x22, x22, #0x3FF   // x22 = x22 & 0x3FF → limitar a 10 bits (0–1023)
+    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–511
+    add x11, x22, #64      // x11 = x22 + 64 → ajusta a rango útil [64–575] para X
+
+    // --------- Generar coordenada Y pseudoaleatoria ---------
+    mul x22, x22, x27      // x22 = x22 * 37 → nueva dispersión
+    and x22, x22, #0xFF    // x22 = x22 & 0xFF → limitar a 8 bits (0–255)
+    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–127
+    add x12, x22, #10      // x12 = x22 + 10 → ajusta a [10–137] para Y
+
+// --------- Validación: evitar nube 1 → (200 ≤ x ≤ 260) y (65 ≤ y ≤ 155) ---------
+
+    cmp x11, #200
+    blt nube1_ok           // Si x < 200 → fuera de la nube → ok
+    cmp x11, #260
+    bgt nube1_ok           // Si x > 260 → fuera de la nube → ok
+    cmp x12, #65
+    blt nube1_ok           // Si y < 65 → fuera de la nube → ok
+    cmp x12, #155
+    bgt nube1_ok           // Si y > 155 → fuera de la nube → ok
+    b skip_copo            // Si está dentro de la nube → no pintar
+
+nube1_ok:
+    // --------- Validación: evitar nube 2 → (500 ≤ x ≤ 560) y (85 ≤ y ≤ 175) ---------
+
+    cmp x11, #500
+    blt nube2_ok
+    cmp x11, #560
+    bgt nube2_ok
+    cmp x12, #85
+    blt nube2_ok
+    cmp x12, #175
+    bgt nube2_ok
+    b skip_copo            // Está en la nube 2 → no pintar
+
+nube2_ok:
+    // --------- Si no está dentro de ninguna nube, dibujamos el copo ---------
+    bl circulo             // Llamar a función circulo con (x0, color, x11, x12, radio, modo)
+    add x19, x19, #1       // x19 = x19 + 1 → contador de copos++
+
+skip_copo:
+    add x17, x17, x28      // x17 = x17 + 97 → avanzar semilla
+    cmp x19, x21           // ¿Ya se generaron 30 copos?
+    blt copos_loop         // Si no, seguir generando
+
+    ldp x28, x29, [sp], #16
+    ldp x26, x27, [sp], #16
+    ldp x21, x22, [sp], #16
+    ldp x17, x19, [sp], #16
+    ldp x0,  x1,  [sp], #16
+
     // --------------------------
     // Pintar rmbos
     // --------------------------
