@@ -58,81 +58,15 @@ loop0:
 
 //Nube 1
     mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
     mov x11, 200
     mov x12, 65
-    mov x13, 60
-    mov x14, 45
-    bl rectangulo
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 200
-    mov x12, 110
-    mov x13, 30
-    mov x14, 45
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 260
-    mov x12, 110         
-    mov x13, 30
-    mov x14, 45
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 230
-    mov x12, 65
-    mov x13, 30
-    mov x14, 45
-    bl elipse
+    bl nube
 
 //Nube 2
     mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
     mov x11, 500
     mov x12, 85
-    mov x13, 60
-    mov x14, 45
-    bl rectangulo
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 500
-    mov x12, 130
-    mov x13, 30
-    mov x14, 45
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 560
-    mov x12, 130
-    mov x13, 30
-    mov x14, 45
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 530
-    mov x12, 85
-    mov x13, 30
-    mov x14, 45
-    bl elipse
+    bl nube
 
     // --------------------------
     // Pintar triangulos
@@ -1073,6 +1007,37 @@ InfLoop:
 //---------------------
 //Funciones auxiliares
 //---------------------
+
+nube:
+    str x30, [sp, #-16]!    // guarda el link register en stack
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    mov x13, 60
+    mov x14, 45
+    bl rectangulo
+
+    mov x13, 30
+
+    mov x0, x20
+    add x12, x12, 45
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    add x11, x11, 60
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    sub x11, x11, 30
+    sub x12, x12, 45
+    bl elipse
+
+    ldr x30, [sp], #16      // restaura Link register
+
+    ret
+
 
 rectangulo:
 
