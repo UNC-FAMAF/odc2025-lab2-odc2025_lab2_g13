@@ -357,369 +357,13 @@ loop0:
     mov x12, 340
     bl drew_stan
 
-
-
 //---------------------------------------------//
-//         La novia                           //
+//         Wendy                              //
 //-------------------------------------------//
-
-// Pelo 
     mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
     mov x11, 141
     mov x12, 283
-    mov x13, 92
-    mov x14, 60
-    bl rectangulo
-
-// ABRIGO (campera violeta)
-    mov x0, x20
-    mov x10, 0x63b4
-    movk x10, 0xa2, lsl 16
-    mov x11, 150 //x
-    mov x12, 340 //y
-    mov x13, 80 //a
-    mov x14, 80 //b
-    bl rectangulo 
-
-// CIERRE Y BROCHES DEL ABRIGO 
-    mov x0, x20              // Empezamos con el cierre del abrigo
-    mov x10, 0x000000        // Negro
-    mov x11, 190             // Coordenada X centrada en el abrigo
-    mov x12, 340             // Coordenada Y igual a la del abrigo
-    mov x13, 2               // Ancho muy fino
-    mov x14, 80              // Alto igual al del abrigo
-    bl rectangulo
-
-    mov x0, x20              // Empezamos con los broches
-    mov x10, 0x000000        // Color negro
-    mov x13, 3               // Radio pequeño
-
-    // Broche mas alto
-    mov x11, 186             // X a la izquierda del cierre
-    mov x12, 365             // Y bajado para evitar la bufanda
-    mov x14, 0               
-    bl circulo
-
-    // Broche del medio
-    mov x11, 186
-    mov x12, 390
-    bl circulo
-
-    // Broche mas bajo 
-    mov x11, 186
-    mov x12, 415
-    bl circulo
-
-
-
-//BUFANDA
-    mov x0, x20
-    mov x10, 0x3957
-    movk x10, 0x38, lsl 16
-    mov x11, 187                // X  
-    mov x12, 315               // Y  
-    mov x13, 40                // Radio
-    mov x14,2
-    bl circulo
-
-
-// Cabeza (círculo piel)
-    mov x0, x20
-    mov x10, 0xd9b3            // Color piel
-    movk x10, 0xfb, lsl 16
-    mov x11, 187               // X  
-    mov x12, 300                // Y  
-    mov x13, 45                 // Radio
-    mov x14,0
-    bl circulo
-
-
-//Pelo sobre la cara    
-    //flequillo
-    mov x0, x20 
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 187
-    mov x12, 290
-    mov x13, 47
-    mov x14, 1
-    bl circulo
-
-    mov x0, x20
-    mov x10, 0xd9b3            // Color piel
-    movk x10, 0xfb, lsl 16
-    mov x11, 143
-    mov x12, 282
-    mov x13, 89
-    mov x14, 25
-    bl rectangulo
-
-    //mechon izquierdo 1
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 143
-    mov x12, 280
-    mov x13, 10
-    mov x14, 30
-    mov x15, 3
-    bl cuarto_elipse
-
-    //mechon izquierdo 2
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 153
-    mov x12, 280
-    mov x13, 10
-    mov x14, 10
-    mov x15, 3
-    bl cuarto_elipse
-
-    //mechon derecho 1
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 232
-    mov x12, 280
-    mov x13, 10
-    mov x14, 30
-    mov x15, 2
-    bl cuarto_elipse
-
-    //mechon derecho 2
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 223
-    mov x12, 280
-    mov x13, 10
-    mov x14, 10
-    mov x15, 2
-    bl cuarto_elipse
-
-//Gorro 
-    mov x0, x20
-    mov x10, 0x87e9
-    movk x10, 0xfa, lsl 16
-    mov x11, 187
-    mov x12, 270
-    mov x13, 45
-    mov x14, 28
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0x87e9
-    movk x10, 0xfa, lsl 16
-    mov x11, 187
-    mov x12, 270
-    mov x13, 45
-    mov x14, 28
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0x2931
-    movk x10, 0x2c, lsl 16
-    mov x11, 187
-    mov x12, 250
-    mov x13, 10
-    mov x14, 5
-    bl elipse
-
-//CONTORNO Brazos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 147 // x
-    mov x12, 378 // y 
-    mov x13, 14
-    mov x14, 41
-    bl elipse
-    
-    mov x0, x20
-    mov x11, 227
-    bl elipse
-
-
-// Brazos
-    mov x0, x20
-    mov x10, 0x63b4
-    movk x10, 0xa2, lsl 16
-    mov x11, 147 // x
-    mov x12, 378 // y 
-    mov x13, 13
-    mov x14, 40
-    bl elipse
-
-    mov x0, x20
-    mov x11, 227
-    bl elipse
-
-//borrar borde dentro del cuerpo 
-    mov x0, x20
-    mov x13, 16
-    mov x14, 40
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x11, 147
-    mov x13, 16
-    mov x14, 40
-    mov x15, 1
-    bl cuarto_elipse
-
-//CONTORNO OJOS 
-
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 15
-    mov x14,0
-    bl circulo
-    
-    mov x11, 197
-    mov x14,0
-    bl circulo
-
-//FONDO OJOS
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 14
-    mov x14, 0
-    bl circulo
-    
-    mov x11, 197
-    mov x14, 0
-    bl circulo
-
-//COLOR OJO
-
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 2
-    mov x14, 0
-    bl circulo
-
-    mov x0, x20
-    mov x11, 197
-    mov x14,0
-    bl circulo
-
-// Sonrisa
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 187
-    mov x12, 328
-    mov x13, 12
-    mov x14, 6
-    bl elipse
-
-    
-    mov x0, x20
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16
-    mov x11, 187
-    mov x12, 328
-    mov x13, 10
-    mov x14, 4
-    bl elipse
-
-    mov x0, x20
-    mov x10, 0xd9b3
-    movk x10,  0xfb, lsl 16
-    mov x11, 175
-    mov x12, 322
-    mov x13, 25
-    mov x14, 8
-    bl rectangulo
-
- // Vestido
-    mov x0, x20
-    mov x10, 0xdc05
-    movk x10, 0xfa, lsl 16
-    mov x11, 153
-    mov x12, 420
-    mov x13, 74
-    mov x14, 20
-    bl rectangulo
-    
-
-//Zapatos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 167 //x
-    mov x12, 440 //y
-    mov x13, 25//a
-    mov x14, 6 //b
-    bl elipse
-
-    mov x0, x20
-    mov x11, 212
-    bl elipse
-
-//MANOS 
-    mov x0, x20 
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16 
-    mov x11, 147
-    mov x12, 410
-    mov x13, 10
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 227
-    mov x14, 0
-    bl circulo
-
-//CONTORNO DEDO
-
-    mov x0, x20 
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16 
-    mov x11, 152
-    mov x12, 410
-    mov x13, 6
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 222
-    mov x14, 0
-    bl circulo
-
-
-// DEDO
-
-    mov x0, x20 
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16 
-    mov x11, 152
-    mov x12, 410
-    mov x13, 5
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 222
-    mov x14, 0
-    bl circulo  
+    bl drew_wendy
 
 //--------------------------------------------
 //Generamos los copos de nieve para el fondo
@@ -1011,6 +655,348 @@ drew_stan:
 
     mov x0, x20
     add x11, x11, 20
+    mov x14, 0
+    bl circulo
+
+    ldr x30, [sp], #16      // restaura Link register
+    ret
+
+drew_wendy:
+    str x30, [sp, #-16]!    // guarda el link register en stack
+
+// Pelo 
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    mov x13, 92
+    mov x14, 60
+    bl rectangulo
+
+// ABRIGO (campera violeta)
+    mov x0, x20
+    mov x10, 0x63b4
+    movk x10, 0xa2, lsl 16
+    add x11, x11, 9
+    add x12, x12, 57
+    mov x13, 80 //a
+    mov x14, 80 //b
+    bl rectangulo 
+
+// CIERRE Y BROCHES DEL ABRIGO 
+    mov x0, x20              // Empezamos con el cierre del abrigo
+    mov x10, 0x000000        // Negro
+    add x11, x11, 40         // Coordenada X centrada en el abrigo
+    mov x13, 2               // Ancho muy fino
+    mov x14, 80              // Alto igual al del abrigo
+    bl rectangulo
+
+    mov x0, x20              // Empezamos con los broches
+    mov x10, 0x000000        // Color negro
+    mov x13, 3               // Radio pequeño
+
+// Broche mas alto
+    sub x11, x11, 4             // X a la izquierda del cierre
+    add x12, x12, 25            // Y bajado para evitar la bufanda
+    mov x14, 0               
+    bl circulo
+
+// Broche del medio
+    add x12, x12, 25
+    bl circulo
+
+// Broche mas bajo 
+    add x12, x12, 25
+    bl circulo
+
+
+//BUFANDA
+    mov x0, x20
+    mov x10, 0x3957
+    movk x10, 0x38, lsl 16
+    add x11, x11, 1 
+    sub x12, x12, 100               // Y  
+    mov x13, 40                // Radio
+    mov x14,2
+    bl circulo
+
+
+// Cabeza (círculo piel)
+    mov x0, x20
+    mov x10, 0xd9b3            // Color piel
+    movk x10, 0xfb, lsl 16
+    sub x12, x12, 15 
+    mov x13, 45                 // Radio
+    mov x14,0
+    bl circulo
+
+
+//Pelo sobre la cara    
+    //flequillo
+    mov x0, x20 
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    sub x12, x12, 10
+    mov x13, 47
+    mov x14, 1
+    bl circulo
+
+    mov x0, x20
+    mov x10, 0xd9b3            // Color piel
+    movk x10, 0xfb, lsl 16
+    sub x11, x11, 44
+    sub x12, x12, 8
+    mov x13, 89
+    mov x14, 25
+    bl rectangulo
+
+    //mechon izquierdo 1
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    sub x12, x12, 2
+    mov x13, 10
+    mov x14, 30
+    mov x15, 3
+    bl cuarto_elipse
+
+    //mechon izquierdo 2
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    add x11, x11, 10
+    mov x13, 10
+    mov x14, 10
+    mov x15, 3
+    bl cuarto_elipse
+
+    //mechon derecho 1
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    add x11, x11, 79
+    mov x13, 10
+    mov x14, 30
+    mov x15, 2
+    bl cuarto_elipse
+
+    //mechon derecho 2
+    mov x0, x20
+    mov x10, 0x2e36
+    movk x10, 0x38, lsl 16
+    sub x11, x11, 9
+    mov x13, 10
+    mov x14, 10
+    mov x15, 2
+    bl cuarto_elipse
+
+//Gorro 
+    mov x0, x20
+    mov x10, 0x87e9
+    movk x10, 0xfa, lsl 16
+    sub x11, x11, 36
+    sub x12, x12, 10
+    mov x13, 45
+    mov x14, 28
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0x87e9
+    movk x10, 0xfa, lsl 16
+    mov x13, 45
+    mov x14, 28
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    mov x10, 0x2931
+    movk x10, 0x2c, lsl 16
+    sub x12, x12, 20
+    mov x13, 10
+    mov x14, 5
+    bl elipse
+
+//CONTORNO Brazos
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    sub x11, x11, 40
+    add x12, x12, 128
+    mov x13, 14
+    mov x14, 41
+    bl elipse
+    
+    mov x0, x20
+    add x11, x11, 80
+    bl elipse
+
+
+// Brazos
+    mov x0, x20
+    mov x10, 0x63b4
+    movk x10, 0xa2, lsl 16
+    sub x11, x11, 80
+    mov x13, 13
+    mov x14, 40
+    bl elipse
+
+    mov x0, x20
+    add x11, x11, 80
+    bl elipse
+
+//borrar borde dentro del cuerpo 
+    mov x0, x20
+    mov x13, 16
+    mov x14, 40
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    sub x11, x11, 80
+    mov x13, 16
+    mov x14, 40
+    mov x15, 1
+    bl cuarto_elipse
+
+//CONTORNO OJOS 
+
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    add x11, x11, 30
+    sub x12, x12, 78
+    mov x13, 15
+    mov x14, 0
+    bl circulo
+    
+    add x11, x11, 20
+    mov x14, 0
+    bl circulo
+
+//FONDO OJOS
+
+    mov x0, x20
+    mov x10, 0xffff
+    movk x10, 0xff, lsl 16
+    sub x11, x11, 20
+    mov x13, 14
+    mov x14, 0
+    bl circulo
+    
+    add x11, x11, 20
+    mov x14, 0
+    bl circulo
+
+//COLOR OJO
+
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    sub x11, x11, 20
+    mov x13, 2
+    mov x14, 0
+    bl circulo
+
+    mov x0, x20
+    add x11, x11, 20
+    mov x14,0
+    bl circulo
+
+// Sonrisa
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    sub x11, x11, 10
+    add x12, x12, 28
+    mov x13, 12
+    mov x14, 6
+    bl elipse
+
+    
+    mov x0, x20
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16
+    mov x13, 10
+    mov x14, 4
+    bl elipse
+
+    mov x0, x20
+    mov x10, 0xd9b3
+    movk x10,  0xfb, lsl 16
+    sub x11, x11, 12
+    sub x12, x12, 6
+    mov x13, 25
+    mov x14, 8
+    bl rectangulo
+
+ // Vestido
+    mov x0, x20
+    mov x10, 0xdc05
+    movk x10, 0xfa, lsl 16
+    sub x11, x11, 22
+    add x12, x12, 98 
+    mov x13, 74
+    mov x14, 20
+    bl rectangulo
+    
+
+//Zapatos
+    mov x0, x20
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16
+    add x11, x11, 14 //x
+    add x12, x12, 20 //y
+    mov x13, 25//a
+    mov x14, 6 //b
+    bl elipse
+
+    mov x0, x20
+    add x11, x11, 45
+    bl elipse
+
+//MANOS 
+    mov x0, x20 
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16 
+    sub x11, x11, 65
+    sub x12, x12, 30
+    mov x13, 10
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    add x11, x11, 80
+    mov x14, 0
+    bl circulo
+
+//CONTORNO DEDO
+
+    mov x0, x20 
+    mov x10, 0x0000
+    movk x10, 0x00, lsl 16 
+    sub x11, x11, 75
+    mov x13, 6
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    add x11, x11, 70
+    mov x14, 0
+    bl circulo
+
+
+// DEDO
+
+    mov x0, x20 
+    mov x10, 0xd9b3
+    movk x10, 0xfb, lsl 16 
+    sub x11, x11, 70
+    mov x13, 5
+    mov x14,0
+    bl circulo
+
+    mov x0, x20 
+    add x11, x11, 70
     mov x14, 0
     bl circulo
 
