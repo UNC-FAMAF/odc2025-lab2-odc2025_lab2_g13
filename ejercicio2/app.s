@@ -56,17 +56,6 @@ loop0:
     mov x0, x20              // Restaurar framebuffer base después del fondo
 
 
-//Nube 1
-    mov x0, x20
-    mov x11, 200
-    mov x12, 65
-    bl nube
-
-//Nube 2
-    mov x0, x20
-    mov x11, 500
-    mov x12, 85
-    bl nube
 
     // --------------------------
     // Pintar triangulos
@@ -133,15 +122,6 @@ loop0:
     mov x11, 400
     mov x12, 220
     mov x13, 50
-    bl triangulo
-
-    //Nieve en la montaña 2
-    mov x0, x20
-    mov x10, 0xf8f8
-    movk x10, 0xf8, lsl 16
-    mov x11, 100
-    mov x12, 100
-    mov x13, 100
     bl triangulo
 
     //linea
@@ -368,81 +348,60 @@ loop0:
 //--------------------------------------------
 //Generamos los copos de nieve para el fondo
 //--------------------------------------------
-    bl generar_copos
-    mov x0, x20 
 
-// ---------------------------------------------
-// Inicializar desplazamiento de nubes
-// ---------------------------------------------
-    mov x27, #0        // desplazamiento nube 1
-    mov x28, #0        // desplazamiento nube 2
-
-// ---------------------------------------------
-// Bucle de animación de nubes
-// ---------------------------------------------
-loop_anim_nubes:
-
-    // Calcular posición actual nube 1
-    mov x5, #640         // posición inicial derecha
-    sub x5, x5, x27      // x5 = 640 - desplazamiento
-
-    // Calcular posición actual nube 2
-    mov x6, #880         // nube 2 empieza más lejos (fuera de pantalla)
-    sub x6, x6, x28
-
-    // Borrar nube 1 (área anterior)
+    // Restaurar framebuffer
     mov x0, x20
-    mov x10, 0xd6e7
-    movk x10, 0x0093, lsl 16
-    mov x11, x5
-    mov x12, #40         // Y fija nube 1
-    mov x13, #80         // ancho
-    mov x14, #60         // alto
-    bl rectangulo
 
-    // Borrar nube 2
-    mov x0, x20
-    mov x11, x6
-    mov x12, #60         // Y fija nube 2
-    mov x13, #80
-    mov x14, #60
-    bl rectangulo
+    // Inicializar variables
+    mov x29, #0     // X inicia de la nube
 
-    // Dibujar nube 1
+loop_animar:
+
+    // Dibujar nube
     mov x0, x20
-    mov x11, x5
-    mov x12, #40
+    mov x11, x29
+    mov x12, 60
     bl nube
 
-    // Dibujar nube 2
+    // Delay simple          AVISO CAMBIAR X16 PARA CAMBIAR LA VELOCIDAD DE LA ANIMACION
+    movz x16, 0x02, lsl 16
+    movk x16, 0xffFF
+    lsl x16, x16, 5
+delay_loop:
+    subs x16, x16, #1
+    b.ne delay_loop
+
+    mov x11, x29
+    mov x12, 60
+    bl nube_borra
+
+  //Nube 1
     mov x0, x20
-    mov x11, x6
-    mov x12, #60
+    mov x11, 200
+    mov x12, 65
     bl nube
 
-    // Aumentar desplazamiento
-    add x27, x27, #2
-    add x28, x28, #2
+//Nube 2
+    mov x0, x20
+    mov x11, 500
+    mov x12, 85
+    bl nube
 
-    // Reiniciar desplazamiento cuando salen de pantalla
-    cmp x27, #720
-    b.lt .ok1
-    mov x27, #0
-.ok1:
-    cmp x28, #880
-    b.lt .ok2
-    mov x28, #0
-.ok2:
 
-    // el delay(no funciona muy bien!!)
-    movz x0, 0x2, lsl 16
-    movk x0, 0xFFFF
-.delay_loop:
-    subs x0, x0, #1
-    b.ne .delay_loop
 
-    // Repetir animación
-    b loop_anim_nubes
+    //Nieve en la montaña 2
+    mov x0, x20
+    mov x10, 0xf8f8
+    movk x10, 0xf8, lsl 16
+    mov x11, 100
+    mov x12, 100
+    mov x13, 100
+    bl triangulo
+
+    // Calcular nueva posición
+    add x29, x29, 1
+
+    bl loop_animar
 
     // --------------------------
     // Loop infinito

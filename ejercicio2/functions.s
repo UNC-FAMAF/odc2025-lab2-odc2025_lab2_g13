@@ -3,6 +3,7 @@
 .equ BITS_PER_PIXEL, 32
 
 .global nube
+.global nube_borra
 .global triangulo
 .global rectangulo
 .global rombo
@@ -18,10 +19,11 @@
 //---------------------
 
 nube:
-    str x30, [sp, #-16]!    // guarda el link register en stack
+
+    str x30, [sp, #-16]!
     mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
+    mov x10, 0xFFFF
+    movk x10, 0xFF, lsl 16
     mov x13, 60
     mov x14, 45
     bl rectangulo
@@ -43,7 +45,38 @@ nube:
     sub x12, x12, 45
     bl elipse
 
-    ldr x30, [sp], #16      // restaura Link register
+    ldr x30, [sp], #16
+
+    ret
+    
+nube_borra:
+
+    str x30, [sp, #-16]!
+    mov x0, x20
+    mov x10, 0xd6e7
+    movk x10, 0x93, lsl 16
+    mov x13, 60
+    mov x14, 45
+    bl rectangulo
+
+    mov x13, 30
+
+    mov x0, x20
+    add x12, x12, 45
+    mov x15, 0
+    bl cuarto_elipse
+
+    mov x0, x20
+    add x11, x11, 60
+    mov x15, 1
+    bl cuarto_elipse
+
+    mov x0, x20
+    sub x11, x11, 30
+    sub x12, x12, 45
+    bl elipse
+
+    ldr x30, [sp], #16
 
     ret
 
