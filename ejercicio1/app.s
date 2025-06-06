@@ -5,30 +5,7 @@
 .equ GPIO_GPFSEL0,     0x00
 .equ GPIO_GPLEV0,      0x34
 
-.globl main
-.global cuadrado 
-
-/*INSTRUCCIONES QUE NO SE ENCUENTRAN EN LA GREENCARD DE LEGv8:
-    (Usaremos los registros x1 y x2 como ejemplo)
-
-    neg: Niega el registro x2 y guarda el mismo en el registro x1, al igual que CMP, NEG es otra pseudoinstruccion, la cual es mov, hacer por ejemplo NEG x1, x13 es el equivalente a hacer NEG x1, -x13. En el programa fue utilizado para realizar desplazamientos desde el centro de una figura, por ejemplo, en la funcion circulo.
-
-    sp (Stack Pointer): Como su nombre lo dice, es el puntero a una pila, mas especificamente apunta al tope de la misma, es muy util para guardar y recuperar datos temporales cuando se llaman otras funciones, como en circulo por ejemplo. Es fundamental tambien para las instrucciones STP y LDP.
-
-    stp: Guarda 2 registros en memoria en donde apunta sp, y luego hace que sp reserve un espacio para poder ser actualizado. Normalmente es usado al entrar a una funcion para guardar los registros y usarlos para una dererminada funcion.
-
-    ldp: Carga los valores de 2 registros desde la direccion apuntada por sp en memoria y luego la actualiza hacia arriba. Normalmente es usado al salir de una funcion para restaurar el estado de los valores.
-
-    ACA UN EJEMPLO DE STP Y LDP TRABAJADOS EN CONJUNTO:
-    stp x1, x2, [sp, #-16]!   // Guarda los registros temporales que estan por usarse 
-  
-    (Codigo) 
-   
-    ldp x1, x2, [sp], #16     // Restaura los registros para que continuar con los valores que se usaban en el 
-                              // programa
-*/
-
-
+.global main
 
 main:
     // x0 contiene la dirección base del framebuffer
@@ -55,6 +32,68 @@ loop0:
     
     mov x0, x20              // Restaurar framebuffer base después del fondo
 
+/* ¿Qué parametros utiliza cada función? 
+
+    Funciones basicas (figuras geometricas):
+    - triangulo:
+        Pinta un triángulo isósceles con base horizontal y vértice superior, centrado horizontalmente.
+        x10 = Color
+        x11 = Coordenada x del vértice superior
+        x12 = Coordenada x del vértice superior 
+        x13 = Altura
+
+    - rectangulo
+        Dibuja un rectángulo relleno, con base y altura variables.
+        x10 = Color
+        x11 = Coordenada x del vértice superior
+        x12 = Coordenada y del vértice superior
+        x13 = Ancho del rectángulo
+        x14 = Alto del rectángulo
+
+    - rombo
+        Dibuja un rombo relleno dada la distancia vertical desde el centro hasta un vertice.
+        x10 = Color
+        x11 = Coordenada X del centro del rombo.
+        x12 = Coordenada Y del centro del rombo.
+        x13 = Radio del rombo (altura a la mitad)
+
+    - circulo
+        Dibuja un círculo relleno o solo una porción del círculo (arriba, abajo, izquierda, derecha).
+        x10 = Color
+        x11 = Coordenada X del centro.
+        x12 = Coordenada Y del centro.
+        x13 = Radio.
+        x14 = "Menú" sobre que sección pintar
+            - 0: circulo completo
+            - 1: mitad superior
+            - 2: mitad inferior
+            - 3: mitad izquierda
+            - 4: mitad derecha
+
+    - elipse:
+        Dibuja una elipse rellena.
+        x10 = Color
+        x11 = Coordenada X del centro.
+        x12 = Coordenada Y del centro.
+        x13 = Radio horizontal
+        x14 = Radio vertical
+
+    - cuarto_elipse:
+        Dibujar un cuarto específico de una elipse.
+        x10 = Color
+        x11 = Coordenada X del centro.
+        x12 = Coordenada Y del centro.
+        x13 = Radio horizontal
+        x14 = Radio vertical
+        x15 = "Menú" sobre que sección pintar
+            0: Parte Arriba-Izquierda
+            1: Arriba-Derecha
+            2: Abajo-Izquierda
+            3: Abajo-Derecha
+
+    Las demas funciones (Nube, dibujar_stan, etc) son combinaciones de las funciones basicas.
+*/
+
 
 //Nube 1
     mov x0, x20
@@ -68,16 +107,7 @@ loop0:
     mov x12, 85
     bl nube
 
-    // --------------------------
-    // Pintar triangulos
-    // --------------------------
-    // OBSERVEMOS que La funcion triangulo utiliza:
-    // x10 = Guarda el color del rectangulo.
-    // x11, x12 = Coordenadas del inicio.
-    // x13 = Altura
-    // Antes de llamar a la funcion debemos determinar estos valores.
-
-    //Montaña 1
+//Montaña 1
     mov x0, x20
     mov x10, 0x6346
     movk x10, 0x32, lsl 16
@@ -86,7 +116,7 @@ loop0:
     mov x13, 260
     bl triangulo
 
-    //Montaña 2
+//Montaña 2
     mov x0, x20
     mov x10, 0x815c
     movk x10, 0x4b, lsl 16
@@ -95,18 +125,7 @@ loop0:
     mov x13, 380
     bl triangulo
 
-    // --------------------------
-    // Pintar rectangulos
-    // --------------------------
-    // OBSERVEMOS que La funcion rectangulo utiliza:
-    // x10 = Guarda el color del rectangulo.
-    // x11, x12 = Coordenadas del inicio.
-    // x13, x14 = Ancho y alto.
-    // Antes de llamar a la funcion debemos determinar estos valores.
-
-
-
-    //Piso
+//Piso
     mov x0, x20                  
     mov x10, 0x424d
     movk x10, 0x4c, lsl 16
@@ -116,7 +135,7 @@ loop0:
     mov x14, 90
     bl rectangulo                  
 
-    //Nieve sobre el piso
+//Nieve sobre el piso
     mov x0, x20                 
     mov x10, 0xf8f8
     movk x10, 0xf8, lsl 16
@@ -126,7 +145,7 @@ loop0:
     mov x14, 40
     bl rectangulo
 
-    //Nieve en la montaña 1
+//Nieve en la montaña 1
     mov x0, x20
     mov x10, 0xf8f8
     movk x10, 0xf8, lsl 16
@@ -135,7 +154,7 @@ loop0:
     mov x13, 50
     bl triangulo
 
-    //Nieve en la montaña 2
+//Nieve en la montaña 2
     mov x0, x20
     mov x10, 0xf8f8
     movk x10, 0xf8, lsl 16
@@ -144,7 +163,7 @@ loop0:
     mov x13, 100
     bl triangulo
 
-    //linea
+//linea
     mov x0, x20                  
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -154,16 +173,7 @@ loop0:
     mov x14, 120
     bl rectangulo                  
 
-    // --------------------------
-    // Pintar rmbos
-    // --------------------------
-    // OBSERVEMOS que La funcion rombo utiliza:
-    // x10 = Guarda el color del rectangulo.
-    // x11, x12 = Coordenadas del inicio.
-    // x13, x14 = Distancia del centro al vertice..
-    // Antes de llamar a la funcion debemos determinar estos valores.
-
-    //Cartel
+//Cartel
     mov x0, x20
     mov x10, 0xdb22
     movk x10, 0xf5, lsl 16
@@ -172,22 +182,8 @@ loop0:
     mov x13, 55
     bl rombo
 
-
-    // --------------------------
-    // Pintar rmbos
-    // --------------------------
-    // (Este es el código existente para el cartel)
-    mov x0, x20
-    mov x10, 0xdb22
-    movk x10, 0xf5, lsl 16
-    mov x11, 549
-    mov x12, 280
-    mov x13, 55
-    bl rombo
-
-// DIBUJAR LAS LETRAS OdC2025 (no terminé de comentar todo)
-
-    // Este bloque pinta las letras OdC2025 con el color del asfalto
+// DIBUJAR LAS LETRAS OdC2025
+    // Este bloque establece que las letras OdC2025 tengan el color del asfalto.
     mov x10, 0x424d
     movk x10, 0x4c, lsl 16
 
@@ -195,60 +191,41 @@ loop0:
     // En x16 las coords de la base vertical
     movz x16, 278
 
-   //Las dibujo utilizando rectángulos que como dice mas arriba:
-
-    // OBSERVEMOS que La funcion rectangulo utiliza:
-
-    // x10 = Guarda el color del rectangulo. 
-    //Este se guardó al principo asi que no lo vovemos a guardar
-
-    // x11, x12 = Coordenadas del inicio.
-    // x13, x14 = Ancho y alto.
-    // Antes de llamar a la funcion debemos determinar estos valores.
-
-    // Dibujo la letra O:
-    // Comienzo con las líneas horizontales superior e inferior
-
-// LETRA O
+    // LETRA O
     movz x13, 10 // determino que el ancho es 5*2, es decir 5 bloques de 2px => 10
     movz x14, 2 // el ancho es 1*2, es decir un bloque de 2px => 2
-    
-    // ahora guardo las coords de la base en los parametros de inicio
-    mov x11, #510 //esta es la base horizontal
+    mov x11, 510 
     mov x12, x16
     bl rectangulo
-    add x12, x16, #8
-    bl rectangulo //Una vez obtenidos todos los parámetros dibuja la línea de arriba
+    add x12, x16, 8
+    bl rectangulo 
 
     movz x13, 2
     movz x14, 8
-    mov x11, #510
-    mov x12, #280
+    mov x11, 510
+    mov x12, 280
     bl rectangulo
     mov x11, #518
     bl rectangulo
 
-// LETRA d
-
+    // LETRA d
     movz x13, 6   // ancho panza
     movz x14, 6   // alto panza
-    mov x11, #524
-    mov x12, #280
+    mov x11, 524
+    mov x12, 280
     bl rectangulo
 
     movz x13, 2   // palo derecho pero finito
     movz x14, 10  // más alto que la panza
-    mov x11, #530
-    mov x12, #276
+    mov x11, 530
+    mov x12, 276
     bl rectangulo
 
-
-// LETRA C
-
+    // LETRA C
     movz x13, 10  // horizontal arriba
     movz x14, 2
-    mov x11, #536
-    mov x12, #276
+    mov x11, 536
+    mov x12, 276
     bl rectangulo
 
     add x12, x12, #8 // bajo para la línea de abajo
@@ -256,96 +233,92 @@ loop0:
 
     movz x13, 2   // lateral izq
     movz x14, 8
-    mov x11, #536
-    mov x12, #278
+    mov x11, 536
+    mov x12, 278
     bl rectangulo
 
-// NUMERO 2
-
+    // NUMERO 2
     movz x13, 10
     movz x14, 2
-    mov x11, #548
-    mov x12, #276
+    mov x11, 548
+    mov x12, 276
     bl rectangulo // parte de arriba
 
-    add x12, x12, #4
+    add x12, x12, 4
     bl rectangulo // parte del medio
 
-    add x12, x12, #4
+    add x12, x12, 4
     bl rectangulo // parte de abajo
 
     movz x13, 2
     movz x14, 4
-    mov x11, #556
-    mov x12, #278
+    mov x11, 556
+    mov x12, 278
     bl rectangulo // vertical de la derecha
 
-    mov x11, #548
-    mov x12, #282
+    mov x11, 548
+    mov x12, 282
     bl rectangulo // diagonal izquierda
 
-// NUMERO 0
-
+    // NUMERO 0
     movz x13, 10
     movz x14, 2
-    mov x11, #560
-    mov x12, #276
+    mov x11, 560
+    mov x12, 276
     bl rectangulo // línea de arriba
 
-    add x12, x16, #8
+    add x12, x16, 8
     bl rectangulo // línea de abajo
 
     movz x13, 2
     movz x14, 8
-    mov x11, #560
-    mov x12, #278
-    bl rectangulo // lateral izq
+    mov x11, 560
+    mov x12, 278
+    bl rectangulo // lateral izquierdo
 
-    mov x11, #568
-    bl rectangulo // lateral der
+    mov x11, 568
+    bl rectangulo // lateral derecho
 
-// SEGUNDO 2 (igual al anterior con coords distintas)
-
+    // SEGUNDO 2 (igual al anterior con coords distintas)
     movz x13, 10
     movz x14, 2
-    mov x11, #572
-    mov x12, #276
+    mov x11, 572
+    mov x12, 276
     bl rectangulo
-    add x12, x12, #4
+    add x12, x12, 4
     bl rectangulo
-    add x12, x12, #4
+    add x12, x12, 4
     bl rectangulo
 
     movz x13, 2
     movz x14, 4
-    mov x11, #580
-    mov x12, #278
+    mov x11, 580
+    mov x12, 278
     bl rectangulo
 
-    mov x11, #572
-    mov x12, #282                       
+    mov x11, 572
+    mov x12, 282                       
     bl rectangulo
 
- // NUMERO 5
-
+    // NUMERO 5
     movz x13, 10
     movz x14, 2
-    mov x11, #584
-    mov x12, #276
+    mov x11, 584
+    mov x12, 276
     bl rectangulo // horizontal de arriba
-    mov x12, #280
+    mov x12, 280
     bl rectangulo // horizontal medio
-    mov x12, #284
+    mov x12, 284
     bl rectangulo // parte de abajo abajo
 
     movz x13, 2
     movz x14, 4
-    mov x11, #584
-    mov x12, #278
+    mov x11, 584
+    mov x12, 278
     bl rectangulo // verticar lado izq
 
-    mov x11, #592
-    mov x12, #282
+    mov x11, 592
+    mov x12, 282
     bl rectangulo // vertical lado de la dercha
 
 //---------------------------------------------//
@@ -355,7 +328,7 @@ loop0:
     mov x0, x20
     mov x11, 308
     mov x12, 340
-    bl drew_stan
+    bl dibujar_stan
 
 //---------------------------------------------//
 //         Wendy                              //
@@ -363,7 +336,7 @@ loop0:
     mov x0, x20
     mov x11, 141
     mov x12, 283
-    bl drew_wendy
+    bl dibujar_wendy
 
 //--------------------------------------------
 //Generamos los copos de nieve para el fondo
@@ -378,7 +351,6 @@ InfLoop:
     b InfLoop
 
 //---------------------
-//Funciones auxiliares
+//Las funciones se encuentran en functions.s
 //---------------------
 
-//Se encuentran en functions.s

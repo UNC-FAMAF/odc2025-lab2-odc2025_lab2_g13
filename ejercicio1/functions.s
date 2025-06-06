@@ -6,8 +6,8 @@
 .global triangulo
 .global rectangulo
 .global rombo
-.global drew_stan
-.global drew_wendy
+.global dibujar_stan
+.global dibujar_wendy
 .global generar_copos
 .global circulo
 .global elipse
@@ -47,10 +47,10 @@ nube:
 
     ret
 
-drew_stan:
+dibujar_stan:
     str x30, [sp, #-16]!    // guarda el link register en stack
 
-//ABRIGO (chaqueta roja)
+    //ABRIGO (chaqueta roja)
     mov x0, x20
     mov x10, 0x4226
     movk x10, 0x8B, lsl 16
@@ -58,7 +58,7 @@ drew_stan:
     mov x14, 80 //b
     bl rectangulo
 
-// CIERRE Y BROCHES DEL ABRIGO 
+    // CIERRE Y BROCHES DEL ABRIGO 
     mov x0, x20              // Empezamos con el cierre del abrigo
     mov x10, 0x000000        // Negro
     add x11, x11, 40           // Coordenada X centrada en el abrigo
@@ -84,7 +84,7 @@ drew_stan:
     add x12, x12, 25 
     bl circulo
 
-//BUFANDA
+    //BUFANDA
     mov x0, x20
     mov x10, 0xCC0000
     add x11, x11, 1                 // X  
@@ -93,7 +93,7 @@ drew_stan:
     mov x14, 2
     bl circulo
 
-// Cabeza (círculo piel)
+    // Cabeza (círculo piel)
     mov x0, x20
     mov x10, 0xC69C              // Color piel
     movk x10, 0xFF, lsl 16               
@@ -102,7 +102,7 @@ drew_stan:
     mov x14, 0
     bl circulo
 
-//GORRO 
+    //GORRO 
     mov x0, x20 
     mov x10, 0x0000CC
     sub x12, x12, 10
@@ -127,7 +127,7 @@ drew_stan:
     mov x14, 10
     bl rectangulo
 
-// Pompón (círculo blanco) 
+    // Pompón (círculo blanco) 
     mov x0, x20
     mov x10, 0xCC0000
     add x11, x11, 45                // X  
@@ -136,7 +136,7 @@ drew_stan:
     mov x14,0
     bl circulo
 
- // Piernas
+    // Piernas
     mov x0, x20
     mov x10, 0x0000CC
     sub x11, x11, 40
@@ -149,7 +149,7 @@ drew_stan:
     add x11, x11, 45
     bl rectangulo
 
-//Zapatos
+    //Zapatos
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -163,7 +163,7 @@ drew_stan:
     add x11, x11, 45
     bl elipse
 
-// Boca (línea negra)
+    // Boca (línea negra)
     mov x0, x20
     mov x10, 0x0000
     sub x11, x11, 35
@@ -172,7 +172,7 @@ drew_stan:
     mov x14, 2
     bl rectangulo
 
-//Brazos
+    //Brazos
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -186,7 +186,7 @@ drew_stan:
     add x11, x11, 80
     bl elipse
 
-// Brazos
+    // Brazos
     mov x0, x20
     mov x10, 0x4226
     movk x10, 0x8B, lsl 16
@@ -199,7 +199,7 @@ drew_stan:
     add x11, x11, 80
     bl elipse
 
-//borrar borde dentro del cuerpo 
+    //borrar borde dentro del cuerpo 
     mov x0, x20
     mov x13, 16
     mov x14, 40
@@ -213,7 +213,7 @@ drew_stan:
     mov x15, 1
     bl cuarto_elipse
 
-//MANOS 
+    //MANOS 
     mov x0, x20 
     mov x10, 0x0000
     movk x10, 0xCC, lsl 16 
@@ -227,7 +227,7 @@ drew_stan:
     mov x14, 0
     bl circulo
 
-//CONTORNO DEDO
+    //CONTORNO DEDO
     mov x0, x20 
     mov x10, 0x0000
     movk x10, 0x00, lsl 16 
@@ -242,7 +242,7 @@ drew_stan:
     bl circulo
 
 
-//DEDO
+    //DEDO
     mov x0, x20 
     mov x10, 0x0000
     movk x10, 0xCC, lsl 16 
@@ -256,7 +256,7 @@ drew_stan:
     mov x14, 0
     bl circulo
 
-//CONTORNO OJOS 
+    //CONTORNO OJOS 
     mov x0, x20
     mov x10, 0x000000
     sub x11, x11, 45
@@ -269,7 +269,7 @@ drew_stan:
     mov x14,0
     bl circulo
 
-//FONDO OJOS
+    //FONDO OJOS
     mov x0, x20
     mov x10, 0xFFFFFF
     sub x11, x11, 20
@@ -281,7 +281,7 @@ drew_stan:
     mov x14,0
     bl circulo
 
-//COLOR OJO
+    //COLOR OJO
     mov x0, x20
     mov x10, 0x000000
     sub x11, x11, 20
@@ -297,10 +297,10 @@ drew_stan:
     ldr x30, [sp], #16      // restaura Link register
     ret
 
-drew_wendy:
+dibujar_wendy:
     str x30, [sp, #-16]!    // guarda el link register en stack
 
-// Pelo 
+    // Pelo 
     mov x0, x20
     mov x10, 0x2e36
     movk x10, 0x38, lsl 16
@@ -308,7 +308,7 @@ drew_wendy:
     mov x14, 60
     bl rectangulo
 
-// ABRIGO (campera violeta)
+    // ABRIGO (campera violeta)
     mov x0, x20
     mov x10, 0x63b4
     movk x10, 0xa2, lsl 16
@@ -318,7 +318,7 @@ drew_wendy:
     mov x14, 80 //b
     bl rectangulo 
 
-// CIERRE Y BROCHES DEL ABRIGO 
+    // CIERRE Y BROCHES DEL ABRIGO 
     mov x0, x20              // Empezamos con el cierre del abrigo
     mov x10, 0x000000        // Negro
     add x11, x11, 40         // Coordenada X centrada en el abrigo
@@ -330,22 +330,22 @@ drew_wendy:
     mov x10, 0x000000        // Color negro
     mov x13, 3               // Radio pequeño
 
-// Broche mas alto
+    // Broche mas alto
     sub x11, x11, 4             // X a la izquierda del cierre
     add x12, x12, 25            // Y bajado para evitar la bufanda
     mov x14, 0               
     bl circulo
 
-// Broche del medio
+    // Broche del medio
     add x12, x12, 25
     bl circulo
 
-// Broche mas bajo 
+    // Broche mas bajo 
     add x12, x12, 25
     bl circulo
 
 
-//BUFANDA
+    //BUFANDA
     mov x0, x20
     mov x10, 0x3957
     movk x10, 0x38, lsl 16
@@ -356,7 +356,7 @@ drew_wendy:
     bl circulo
 
 
-// Cabeza (círculo piel)
+    // Cabeza (círculo piel)
     mov x0, x20
     mov x10, 0xd9b3            // Color piel
     movk x10, 0xfb, lsl 16
@@ -366,7 +366,7 @@ drew_wendy:
     bl circulo
 
 
-//Pelo sobre la cara    
+    //Pelo sobre la cara    
     //flequillo
     mov x0, x20 
     mov x10, 0x2e36
@@ -425,7 +425,7 @@ drew_wendy:
     mov x15, 2
     bl cuarto_elipse
 
-//Gorro 
+    //Gorro 
     mov x0, x20
     mov x10, 0x87e9
     movk x10, 0xfa, lsl 16
@@ -452,7 +452,7 @@ drew_wendy:
     mov x14, 5
     bl elipse
 
-//CONTORNO Brazos
+    //CONTORNO Brazos
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -467,7 +467,7 @@ drew_wendy:
     bl elipse
 
 
-// Brazos
+    // Brazos
     mov x0, x20
     mov x10, 0x63b4
     movk x10, 0xa2, lsl 16
@@ -480,7 +480,7 @@ drew_wendy:
     add x11, x11, 80
     bl elipse
 
-//borrar borde dentro del cuerpo 
+    //borrar borde dentro del cuerpo 
     mov x0, x20
     mov x13, 16
     mov x14, 40
@@ -494,7 +494,7 @@ drew_wendy:
     mov x15, 1
     bl cuarto_elipse
 
-//CONTORNO OJOS 
+    //CONTORNO OJOS 
 
     mov x0, x20
     mov x10, 0x0000
@@ -509,7 +509,7 @@ drew_wendy:
     mov x14, 0
     bl circulo
 
-//FONDO OJOS
+    //FONDO OJOS
 
     mov x0, x20
     mov x10, 0xffff
@@ -523,7 +523,7 @@ drew_wendy:
     mov x14, 0
     bl circulo
 
-//COLOR OJO
+    //COLOR OJO
 
     mov x0, x20
     mov x10, 0x0000
@@ -538,7 +538,7 @@ drew_wendy:
     mov x14,0
     bl circulo
 
-// Sonrisa
+    // Sonrisa
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -565,7 +565,7 @@ drew_wendy:
     mov x14, 8
     bl rectangulo
 
- // Vestido
+    // Vestido
     mov x0, x20
     mov x10, 0xdc05
     movk x10, 0xfa, lsl 16
@@ -576,7 +576,7 @@ drew_wendy:
     bl rectangulo
     
 
-//Zapatos
+    //Zapatos
     mov x0, x20
     mov x10, 0x0000
     movk x10, 0x00, lsl 16
@@ -590,7 +590,7 @@ drew_wendy:
     add x11, x11, 45
     bl elipse
 
-//MANOS 
+    //MANOS 
     mov x0, x20 
     mov x10, 0xd9b3
     movk x10, 0xfb, lsl 16 
@@ -605,7 +605,7 @@ drew_wendy:
     mov x14, 0
     bl circulo
 
-//CONTORNO DEDO
+    //CONTORNO DEDO
 
     mov x0, x20 
     mov x10, 0x0000
@@ -621,7 +621,7 @@ drew_wendy:
     bl circulo
 
 
-// DEDO
+    // DEDO
 
     mov x0, x20 
     mov x10, 0xd9b3
