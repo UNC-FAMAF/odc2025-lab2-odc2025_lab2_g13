@@ -363,13 +363,13 @@ loop_animar:
     // Dibujar nube
     mov x0, x20
     mov x11, x29
-    mov x12, 60
+    mov x12, 80
     bl nube
 
     // Dibujar nube 2
     mov x0, x20
     mov x11, x28
-    mov x12, #160         // altura más abajo
+    mov x12, 160         // altura más abajo
     bl nube
 
     // Delay simple          AVISO CAMBIAR X16 PARA CAMBIAR LA VELOCIDAD DE LA ANIMACION
@@ -381,12 +381,12 @@ delay_loop:
     b.ne delay_loop
 
     mov x11, x29
-    mov x12, 60
+    mov x12, 80
     bl nube_borra
 
     // Borrar nube 2
     mov x11, x28
-    mov x12, #160
+    mov x12, 160
     bl nube_borra
 
     //Nieve en la montaña 2

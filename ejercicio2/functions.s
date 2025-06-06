@@ -22,8 +22,8 @@ nube:
     str x30, [sp, #-16]!        // solo el link register es suficiente
     // Pintar rectángulo base
     mov x0, x20
-    mov x10, 0xFFFF
-    movk x10, 0xFF, lsl 16
+    mov x10, 0xd5eb
+    movk x10, 0xd9, lsl 16
     mov x13, 60
     mov x14, 45
     bl rectangulo
