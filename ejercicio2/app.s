@@ -8,6 +8,28 @@
 .globl main
 .global cuadrado 
 
+/*INSTRUCCIONES QUE NO SE ENCUENTRAN EN LA GREENCARD DE LEGv8:
+    (Usaremos los registros x1 y x2 como ejemplo)
+
+    neg: Niega el registro x2 y guarda el mismo en el registro x1, al igual que CMP, NEG es otra pseudoinstruccion, la cual es mov, hacer por ejemplo NEG x1, x13 es el equivalente a hacer NEG x1, -x13. En el programa fue utilizado para realizar desplazamientos desde el centro de una figura, por ejemplo, en la funcion circulo.
+
+    sp (Stack Pointer): Como su nombre lo dice, es el puntero a una pila, mas especificamente apunta al tope de la misma, es muy util para guardar y recuperar datos temporales cuando se llaman otras funciones, como en circulo por ejemplo. Es fundamental tambien para las instrucciones STP y LDP.
+
+    stp: Guarda 2 registros en memoria en donde apunta sp, y luego hace que sp reserve un espacio para poder ser actualizado. Normalmente es usado al entrar a una funcion para guardar los registros y usarlos para una dererminada funcion.
+
+    ldp: Carga los valores de 2 registros desde la direccion apuntada por sp en memoria y luego la actualiza hacia arriba. Normalmente es usado al salir de una funcion para restaurar el estado de los valores.
+
+    ACA UN EJEMPLO DE STP Y LDP TRABAJADOS EN CONJUNTO:
+    stp x1, x2, [sp, #-16]!   // Guarda los registros temporales que estan por usarse 
+  
+    (Codigo) 
+   
+    ldp x1, x2, [sp], #16     // Restaura los registros para que continuar con los valores que se usaban en el 
+                              // programa
+*/
+
+
+
 main:
     // x0 contiene la dirección base del framebuffer
     mov x20, x0  // Guarda la dirección base en x20 (preservado)
@@ -30,86 +52,21 @@ loop0:
     cbnz x1, loop0               // Si no terminó la fila, salto
     sub x2, x2, 1                // Decrementar contador Y
     cbnz x2, loop1               // Si no es la última fila, salto
+    
+    mov x0, x20              // Restaurar framebuffer base después del fondo
 
 
 //Nube 1
     mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
     mov x11, 200
     mov x12, 65
-    mov x13, 60
-    mov x14, 45
-    bl rectangulo
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 200
-    mov x12, 110
-    mov x13, 30
-    mov x14, 45
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 260
-    mov x12, 110
-    mov x13, 30
-    mov x14, 45
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 230
-    mov x12, 65
-    mov x13, 30
-    mov x14, 45
-    bl elipse
+    bl nube
 
 //Nube 2
     mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
     mov x11, 500
     mov x12, 85
-    mov x13, 60
-    mov x14, 45
-    bl rectangulo
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 500
-    mov x12, 130
-    mov x13, 30
-    mov x14, 45
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 560
-    mov x12, 130
-    mov x13, 30
-    mov x14, 45
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 530
-    mov x12, 85
-    mov x13, 30
-    mov x14, 45
-    bl elipse
-
+    bl nube
 
     // --------------------------
     // Pintar triangulos
@@ -196,92 +153,6 @@ loop0:
     mov x13, 10
     mov x14, 120
     bl rectangulo                  
-
-//---------------
-//COPOS DE NIEVE
-//---------------
-
-/*Notar que en el ejercicio 1 esta seccion era una funcion con un bl como llamada a la misma 
-esta vez no hubo otra opcion que agregarla como una seccion comun ya que como funcion causa problemas
-en la animacion*/  
-
-    stp x0, x1, [sp, #-16]!   // Guardar x0 y x1
-    stp x17, x19, [sp, #-16]!
-    stp x21, x22, [sp, #-16]!
-    stp x26, x27, [sp, #-16]!
-    stp x28, x29, [sp, #-16]!
-
-    mov x0, x20            // x0 = dirección base del framebuffer (pasada en x20)
-    mov x10, 0xFFFFFF      // x10 = color blanco (para los copos)
-    mov x13, 3             // x13 = radio del círculo (copos chicos)
-    mov x14, 0             // x14 = modo: 0 = círculo completo
-
-    mov x19, 0             // x19 = contador de copos generados
-    mov x21, 30            // x21 = cantidad total de copos que queremos generar
-
-    mov x17, 12345         // x17 = semilla pseudoaleatoria inicial
-
-    mov x26, #593          // x26 = número primo 1 (para dispersión en X)
-    mov x27, #37           // x27 = número primo 2 (para dispersión en Y)
-    mov x28, #97           // x28 = incremento de la semilla
-    mov x29, #2            // x29 = divisor para escalar valores a pantalla
-
-// ---------- Bucle principal que genera todos los copos ----------
-
-copos_loop:
-    // --------- Generar coordenada X pseudoaleatoria ---------
-    mov x22, x17           // x22 = copia de la semilla actual
-    mul x22, x22, x26      // x22 = x22 * 593 → dispersión
-    and x22, x22, #0x3FF   // x22 = x22 & 0x3FF → limitar a 10 bits (0–1023)
-    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–511
-    add x11, x22, #64      // x11 = x22 + 64 → ajusta a rango útil [64–575] para X
-
-    // --------- Generar coordenada Y pseudoaleatoria ---------
-    mul x22, x22, x27      // x22 = x22 * 37 → nueva dispersión
-    and x22, x22, #0xFF    // x22 = x22 & 0xFF → limitar a 8 bits (0–255)
-    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–127
-    add x12, x22, #10      // x12 = x22 + 10 → ajusta a [10–137] para Y
-
-// --------- Validación: evitar nube 1 → (200 ≤ x ≤ 260) y (65 ≤ y ≤ 155) ---------
-
-    cmp x11, #200
-    blt nube1_ok           // Si x < 200 → fuera de la nube → ok
-    cmp x11, #260
-    bgt nube1_ok           // Si x > 260 → fuera de la nube → ok
-    cmp x12, #65
-    blt nube1_ok           // Si y < 65 → fuera de la nube → ok
-    cmp x12, #155
-    bgt nube1_ok           // Si y > 155 → fuera de la nube → ok
-    b skip_copo            // Si está dentro de la nube → no pintar
-
-nube1_ok:
-    // --------- Validación: evitar nube 2 → (500 ≤ x ≤ 560) y (85 ≤ y ≤ 175) ---------
-
-    cmp x11, #500
-    blt nube2_ok
-    cmp x11, #560
-    bgt nube2_ok
-    cmp x12, #85
-    blt nube2_ok
-    cmp x12, #175
-    bgt nube2_ok
-    b skip_copo            // Está en la nube 2 → no pintar
-
-nube2_ok:
-    // --------- Si no está dentro de ninguna nube, dibujamos el copo ---------
-    bl circulo             // Llamar a función circulo con (x0, color, x11, x12, radio, modo)
-    add x19, x19, #1       // x19 = x19 + 1 → contador de copos++
-
-skip_copo:
-    add x17, x17, x28      // x17 = x17 + 97 → avanzar semilla
-    cmp x19, x21           // ¿Ya se generaron 30 copos?
-    blt copos_loop         // Si no, seguir generando
-
-    ldp x28, x29, [sp], #16
-    ldp x26, x27, [sp], #16
-    ldp x21, x22, [sp], #16
-    ldp x17, x19, [sp], #16
-    ldp x0,  x1,  [sp], #16
 
     // --------------------------
     // Pintar rmbos
@@ -428,7 +299,7 @@ skip_copo:
     movz x14, 8
     mov x11, #560
     mov x12, #278
-    bl rectangulo //lateral izq
+    bl rectangulo // lateral izq
 
     mov x11, #568
     bl rectangulo // lateral der
@@ -452,7 +323,7 @@ skip_copo:
     bl rectangulo
 
     mov x11, #572
-    mov x12, #282
+    mov x12, #282                       
     bl rectangulo
 
  // NUMERO 5
@@ -461,722 +332,117 @@ skip_copo:
     movz x14, 2
     mov x11, #584
     mov x12, #276
-    bl rectangulo //horizontal de arriba
+    bl rectangulo // horizontal de arriba
     mov x12, #280
-    bl rectangulo// horizontal medio
+    bl rectangulo // horizontal medio
     mov x12, #284
-    bl rectangulo //parte de abajo abajo
+    bl rectangulo // parte de abajo abajo
 
     movz x13, 2
     movz x14, 4
     mov x11, #584
     mov x12, #278
-    bl rectangulo //verticar lado izq
+    bl rectangulo // verticar lado izq
 
     mov x11, #592
     mov x12, #282
-    bl rectangulo //vertical lado de la dercha
-
-    // -------------------------------------------------
-    // Dibujar a Cartman (un cachito mejorado)
-    // -------------------------------------------------
-
+    bl rectangulo // vertical lado de la dercha
 
 //---------------------------------------------//
 //         STAN SOUTH PARK                    //
 //-------------------------------------------//
 
-
-// ABRIGO (chaqueta roja)
     mov x0, x20
-    mov x10, 0x4226
-    movk x10, 0x8B, lsl 16
-    mov x11, 308 //x
-    mov x12, 340 //y
-    mov x13, 80 //a
-    mov x14, 80 //b
-    bl rectangulo
-
-
-    // CIERRE Y BROCHES DEL ABRIGO 
-    mov x0, x20              // Empezamos con el cierre del abrigo
-    mov x10, 0x000000        // Negro
-    mov x11, 348             // Coordenada X centrada en el abrigo
-    mov x12, 340             // Coordenada Y igual a la del abrigo
-    mov x13, 2               // Ancho muy fino
-    mov x14, 80              // Alto igual al del abrigo
-    bl rectangulo
-
-    mov x0, x20              // Empezamos con los broches
-    mov x10, 0x000000        // Color negro
-    mov x13, 3               // Radio pequeño
-
-    // Broche mas alto
-    mov x11, 344             // X a la izquierda del cierre
-    mov x12, 365             // Y bajado para evitar la bufanda
-    mov x14, 0               
-    bl circulo
-
-    // Broche del medio
-    mov x11, 344
-    mov x12, 390
-    bl circulo
-
-    // Broche mas bajo 
-    mov x11, 344
-    mov x12, 415
-    bl circulo
-
-
-
-//BUFANDA
-    mov x0, x20
-    mov x10, 0xCC0000
-    mov x11, 345                 // X  
-    mov x12, 315               // Y  
-    mov x13, 40                // Radio
-    mov x14,2
-    bl circulo
-
-
-// Cabeza (círculo piel)
-    mov x0, x20
-    mov x10, 0xC69C              // Color piel
-    movk x10, 0xFF, lsl 16
-    mov x11, 345                 // X  
-    mov x12, 300                // Y  
-    mov x13, 45                 // Radio
-    mov x14,0
-    bl circulo
-
-
-//GORRO 
-    mov x0, x20 
-    mov x10, 0x0000CC
-    mov x11, 345
-    mov x12, 290
-    mov x13, 45
-    mov x14, 1
-    bl circulo
-
-    mov x0, x20
-    mov x10, 0xC69C              // Color piel
-    movk x10, 0xFF, lsl 16
-    mov x11, 301
-    mov x12, 285
-    mov x13, 89
-    mov x14, 25
-    bl rectangulo
-
-    mov x0, x20
-    mov x10, 0xCC0000
-    mov x11, 300
-    mov x12, 275
-    mov x13, 90
-    mov x14, 10
-    bl rectangulo
-
-
-// Pompón (círculo blanco) 
-    mov x0, x20
-    mov x10, 0xCC0000
-    mov x11, 345                 // X  
-    mov x12, 245              // Y pos más alta 
-    mov x13, 10               // Radio un poco mayor 
-    mov x14,0
-    bl circulo
-
- // Piernas
-    mov x0, x20
-    mov x10, 0x0000CC
-    mov x11, 305
-    mov x12, 420
-    mov x13, 40
-    mov x14, 20
-    bl rectangulo
-    
-    mov x0, x20
-    mov x11, 350
-    bl rectangulo
-
-//Zapatos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 325 //x
-    mov x12, 440 //y
-    mov x13, 25//a
-    mov x14, 6 //b
-    bl elipse
-
-    mov x0, x20
-    mov x11, 370
-    bl elipse
-
-//CONTORNO OJOS 
-    mov x0, x20
-    mov x10, 0x000000
-    mov x11, 335
-    mov x12, 300
-    mov x13, 15
-    mov x14,0
-    bl circulo
-    
-    mov x11, 355
-    mov x14,0
-    bl circulo
-
-//FONDO OJOS
-    mov x0, x20
-    mov x10, 0xFFFFFF
-    mov x11, 335
-    mov x12, 300
-    mov x13, 14
-    mov x14,0
-    bl circulo
-    
-    mov x11, 355
-    mov x14,0
-    bl circulo
-
-//COLOR OJO
-    mov x0, x20
-    mov x10, 0x000000
-    mov x11, 335
-    mov x12, 300
-    mov x13, 4
-    mov x14,0
-    bl circulo
-
-    mov x0, x20
-    mov x11, 355
-    mov x14,0
-    bl circulo
-
-
-
-
-// Boca (línea negra)
-    mov x0, x20
-    mov x10, 0x0000
-    mov x11, 335
-    mov x12, 325
-    mov x13, 20
-    mov x14, 2
-    bl rectangulo
-
-
-//CONTORNO Brazos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 305 // x
-    mov x12, 378 // y 
-    mov x13, 14
-    mov x14, 41
-    bl elipse
-    
-    mov x0, x20
-    mov x11, 385
-    bl elipse
-
-
-// Brazos
-    mov x0, x20
-    mov x10, 0x4226
-    movk x10, 0x8B, lsl 16
-    mov x11, 305 // x
-    mov x12, 378 // y 
-    mov x13, 13
-    mov x14, 40
-    bl elipse
-    
-    mov x0, x20
-    mov x11, 385
-    bl elipse
-
-//borrar borde dentro del cuerpo 
-    mov x0, x20
-    mov x13, 16
-    mov x14, 40
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x11, 305
-    mov x13, 16
-    mov x14, 40
-    mov x15, 1
-    bl cuarto_elipse
-
-
-
-//MANOS 
-    mov x0, x20 
-    mov x10, 0x0000
-    movk x10, 0xCC, lsl 16 
-    mov x11, 305
-    mov x12, 410
-    mov x13, 10
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 385
-    mov x14,0
-    bl circulo
-
-//CONTORNO DEDO
-
-    mov x0, x20 
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16 
-    mov x11, 310
-    mov x12, 410
-    mov x13, 6
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 380
-    mov x14, 0
-    bl circulo
-
-
-// DEDO
-
-    mov x0, x20 
-    mov x10, 0x0000
-    movk x10, 0xCC, lsl 16 
-    mov x11, 310
-    mov x12, 410
-    mov x13, 5
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 380
-    mov x14,0
-    bl circulo
+    mov x11, 308
+    mov x12, 340
+    bl drew_stan
 
 //---------------------------------------------//
-//         La novia                           //
+//         Wendy                              //
 //-------------------------------------------//
-
-// Pelo 
     mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
     mov x11, 141
     mov x12, 283
-    mov x13, 92
-    mov x14, 60
+    bl drew_wendy
+
+//--------------------------------------------
+//Generamos los copos de nieve para el fondo
+//--------------------------------------------
+    bl generar_copos
+    mov x0, x20 
+
+// ---------------------------------------------
+// Inicializar desplazamiento de nubes
+// ---------------------------------------------
+    mov x27, #0        // desplazamiento nube 1
+    mov x28, #0        // desplazamiento nube 2
+
+// ---------------------------------------------
+// Bucle de animación de nubes
+// ---------------------------------------------
+loop_anim_nubes:
+
+    // Calcular posición actual nube 1
+    mov x5, #640         // posición inicial derecha
+    sub x5, x5, x27      // x5 = 640 - desplazamiento
+
+    // Calcular posición actual nube 2
+    mov x6, #880         // nube 2 empieza más lejos (fuera de pantalla)
+    sub x6, x6, x28
+
+    // Borrar nube 1 (área anterior)
+    mov x0, x20
+    mov x10, 0xd6e7
+    movk x10, 0x0093, lsl 16
+    mov x11, x5
+    mov x12, #40         // Y fija nube 1
+    mov x13, #80         // ancho
+    mov x14, #60         // alto
     bl rectangulo
 
-// ABRIGO (campera violeta)
+    // Borrar nube 2
     mov x0, x20
-    mov x10, 0x63b4
-    movk x10, 0xa2, lsl 16
-    mov x11, 150 //x
-    mov x12, 340 //y
-    mov x13, 80 //a
-    mov x14, 80 //b
-    bl rectangulo 
-
-// CIERRE Y BROCHES DEL ABRIGO 
-    mov x0, x20              // Empezamos con el cierre del abrigo
-    mov x10, 0x000000        // Negro
-    mov x11, 190             // Coordenada X centrada en el abrigo
-    mov x12, 340             // Coordenada Y igual a la del abrigo
-    mov x13, 2               // Ancho muy fino
-    mov x14, 80              // Alto igual al del abrigo
+    mov x11, x6
+    mov x12, #60         // Y fija nube 2
+    mov x13, #80
+    mov x14, #60
     bl rectangulo
 
-    mov x0, x20              // Empezamos con los broches
-    mov x10, 0x000000        // Color negro
-    mov x13, 3               // Radio pequeño
-
-    // Broche mas alto
-    mov x11, 186             // X a la izquierda del cierre
-    mov x12, 365             // Y bajado para evitar la bufanda
-    mov x14, 0               
-    bl circulo
-
-    // Broche del medio
-    mov x11, 186
-    mov x12, 390
-    bl circulo
-
-    // Broche mas bajo 
-    mov x11, 186
-    mov x12, 415
-    bl circulo
-
-
-
-//BUFANDA
+    // Dibujar nube 1
     mov x0, x20
-    mov x10, 0x3957
-    movk x10, 0x38, lsl 16
-    mov x11, 187                // X  
-    mov x12, 315               // Y  
-    mov x13, 40                // Radio
-    mov x14,2
-    bl circulo
+    mov x11, x5
+    mov x12, #40
+    bl nube
 
-
-// Cabeza (círculo piel)
+    // Dibujar nube 2
     mov x0, x20
-    mov x10, 0xd9b3            // Color piel
-    movk x10, 0xfb, lsl 16
-    mov x11, 187               // X  
-    mov x12, 300                // Y  
-    mov x13, 45                 // Radio
-    mov x14,0
-    bl circulo
+    mov x11, x6
+    mov x12, #60
+    bl nube
 
+    // Aumentar desplazamiento
+    add x27, x27, #2
+    add x28, x28, #2
 
-//Pelo sobre la cara    
-    //flequillo
-    mov x0, x20 
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 187
-    mov x12, 290
-    mov x13, 47
-    mov x14, 1
-    bl circulo
+    // Reiniciar desplazamiento cuando salen de pantalla
+    cmp x27, #720
+    b.lt .ok1
+    mov x27, #0
+.ok1:
+    cmp x28, #880
+    b.lt .ok2
+    mov x28, #0
+.ok2:
 
-    mov x0, x20
-    mov x10, 0xd9b3            // Color piel
-    movk x10, 0xfb, lsl 16
-    mov x11, 143
-    mov x12, 282
-    mov x13, 89
-    mov x14, 25
-    bl rectangulo
+    // el delay(no funciona muy bien!!)
+    movz x0, 0x2, lsl 16
+    movk x0, 0xFFFF
+.delay_loop:
+    subs x0, x0, #1
+    b.ne .delay_loop
 
-    //mechon izquierdo 1
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 143
-    mov x12, 280
-    mov x13, 10
-    mov x14, 30
-    mov x15, 3
-    bl cuarto_elipse
-
-    //mechon izquierdo 2
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 153
-    mov x12, 280
-    mov x13, 10
-    mov x14, 10
-    mov x15, 3
-    bl cuarto_elipse
-
-    //mechon derecho 1
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 232
-    mov x12, 280
-    mov x13, 10
-    mov x14, 30
-    mov x15, 2
-    bl cuarto_elipse
-
-    //mechon derecho 2
-    mov x0, x20
-    mov x10, 0x2e36
-    movk x10, 0x38, lsl 16
-    mov x11, 223
-    mov x12, 280
-    mov x13, 10
-    mov x14, 10
-    mov x15, 2
-    bl cuarto_elipse
-
-//Gorro 
-    mov x0, x20
-    mov x10, 0x87e9
-    movk x10, 0xfa, lsl 16
-    mov x11, 187
-    mov x12, 270
-    mov x13, 45
-    mov x14, 28
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0x87e9
-    movk x10, 0xfa, lsl 16
-    mov x11, 187
-    mov x12, 270
-    mov x13, 45
-    mov x14, 28
-    mov x15, 1
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x10, 0x2931
-    movk x10, 0x2c, lsl 16
-    mov x11, 187
-    mov x12, 250
-    mov x13, 10
-    mov x14, 5
-    bl elipse
-
-//CONTORNO Brazos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 147 // x
-    mov x12, 378 // y 
-    mov x13, 14
-    mov x14, 41
-    bl elipse
-    
-    mov x0, x20
-    mov x11, 227
-    bl elipse
-
-
-// Brazos
-    mov x0, x20
-    mov x10, 0x63b4
-    movk x10, 0xa2, lsl 16
-    mov x11, 147 // x
-    mov x12, 378 // y 
-    mov x13, 13
-    mov x14, 40
-    bl elipse
-
-    mov x0, x20
-    mov x11, 227
-    bl elipse
-
-//borrar borde dentro del cuerpo 
-    mov x0, x20
-    mov x13, 16
-    mov x14, 40
-    mov x15, 0
-    bl cuarto_elipse
-
-    mov x0, x20
-    mov x11, 147
-    mov x13, 16
-    mov x14, 40
-    mov x15, 1
-    bl cuarto_elipse
-
-//CONTORNO OJOS 
-
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 15
-    mov x14,0
-    bl circulo
-    
-    mov x11, 197
-    mov x14,0
-    bl circulo
-
-//FONDO OJOS
-
-    mov x0, x20
-    mov x10, 0xffff
-    movk x10, 0xff, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 14
-    mov x14, 0
-    bl circulo
-    
-    mov x11, 197
-    mov x14, 0
-    bl circulo
-
-//COLOR OJO
-
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 177
-    mov x12, 300
-    mov x13, 2
-    mov x14, 0
-    bl circulo
-
-    mov x0, x20
-    mov x11, 197
-    mov x14,0
-    bl circulo
-
-// Sonrisa
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 187
-    mov x12, 328
-    mov x13, 12
-    mov x14, 6
-    bl elipse
-
-    
-    mov x0, x20
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16
-    mov x11, 187
-    mov x12, 328
-    mov x13, 10
-    mov x14, 4
-    bl elipse
-
-    mov x0, x20
-    mov x10, 0xd9b3
-    movk x10,  0xfb, lsl 16
-    mov x11, 175
-    mov x12, 322
-    mov x13, 25
-    mov x14, 8
-    bl rectangulo
-
- // Vestido
-    mov x0, x20
-    mov x10, 0xdc05
-    movk x10, 0xfa, lsl 16
-    mov x11, 153
-    mov x12, 420
-    mov x13, 74
-    mov x14, 20
-    bl rectangulo
-    
-
-//Zapatos
-    mov x0, x20
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16
-    mov x11, 167 //x
-    mov x12, 440 //y
-    mov x13, 25//a
-    mov x14, 6 //b
-    bl elipse
-
-    mov x0, x20
-    mov x11, 212
-    bl elipse
-
-//MANOS 
-    mov x0, x20 
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16 
-    mov x11, 147
-    mov x12, 410
-    mov x13, 10
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 227
-    mov x14, 0
-    bl circulo
-
-//CONTORNO DEDO
-
-    mov x0, x20 
-    mov x10, 0x0000
-    movk x10, 0x00, lsl 16 
-    mov x11, 152
-    mov x12, 410
-    mov x13, 6
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 222
-    mov x14, 0
-    bl circulo
-
-
-// DEDO
-
-    mov x0, x20 
-    mov x10, 0xd9b3
-    movk x10, 0xfb, lsl 16 
-    mov x11, 152
-    mov x12, 410
-    mov x13, 5
-    mov x14,0
-    bl circulo
-
-    mov x0, x20 
-    mov x11, 222
-    mov x14, 0
-    bl circulo
-
-    // Variables (registros preservados)
-	mov x21, 335         // izquierd
-	mov x22, 355         // ojo derecho
-	mov x23, 300         // fijo ojos 
-	mov x24, 1           // movimiento +1 o -1
-	mov x25, 0           // Contador de pasos
-
-	mov x26, 4           // Límite de desplazamiento
-
-loop_ojos:
-    // Borrar pupilas anteriores
-    mov x0, x20
-    mov x10, 0xFFFFFF
-    mov x11, x21
-    mov x12, x23
-    mov x13, 4
-    mov x14, 0
-    bl circulo
-
-    mov x11, x22
-    bl circulo
-
-    // Actualizar coordenadas
-    add x21, x21, x24
-    add x22, x22, x24
-
-    // Dibujar nuevas pupilas 
-    mov x0, x20
-    mov x10, 0x000000
-    mov x11, x21
-    mov x12, x23
-    mov x13, 4
-    mov x14, 0
-    bl circulo
-
-    mov x11, x22
-    bl circulo
-
-    // Retardo para que el movimiento se vea
-    movz x9, 0xffff
-	movk x9, 0x0fff, lsl 16
-
-pausa:
-    sub x9, x9, 1
-    cbnz x9, pausa
-
-    // Actualizar contador
-    add x25, x25, 1
-    cmp x25, x26
-    b.ne loop_ojos
-
-    // Invertir dirección
-    neg x24, x24
-    mov x25, 0
-    b loop_ojos
-
+    // Repetir animación
+    b loop_anim_nubes
 
     // --------------------------
     // Loop infinito
@@ -1184,3 +450,8 @@ pausa:
 InfLoop:
     b InfLoop
 
+//---------------------
+//Funciones auxiliares
+//---------------------
+
+//Se encuentran en functions.s
