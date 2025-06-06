@@ -19,8 +19,8 @@
 //---------------------
 
 nube:
-
-    str x30, [sp, #-16]!
+    str x30, [sp, #-16]!        // solo el link register es suficiente
+    // Pintar rectángulo base
     mov x0, x20
     mov x10, 0xFFFF
     movk x10, 0xFF, lsl 16
@@ -28,30 +28,31 @@ nube:
     mov x14, 45
     bl rectangulo
 
-    mov x13, 30
-
+    // Cuarto de elipse izquierda
     mov x0, x20
     add x12, x12, 45
+    mov x13, 30
     mov x15, 0
     bl cuarto_elipse
 
+    // Cuarto de elipse derecha
     mov x0, x20
     add x11, x11, 60
     mov x15, 1
     bl cuarto_elipse
 
+    // Elipse central
     mov x0, x20
     sub x11, x11, 30
     sub x12, x12, 45
     bl elipse
 
     ldr x30, [sp], #16
-
     ret
     
 nube_borra:
-
     str x30, [sp, #-16]!
+    // Rectángulo base en color celeste
     mov x0, x20
     mov x10, 0xd6e7
     movk x10, 0x93, lsl 16
@@ -59,25 +60,26 @@ nube_borra:
     mov x14, 45
     bl rectangulo
 
-    mov x13, 30
-
+    // Cuarto de elipse izquierda
     mov x0, x20
     add x12, x12, 45
+    mov x13, 30
     mov x15, 0
     bl cuarto_elipse
 
+    // Cuarto de elipse derecha
     mov x0, x20
     add x11, x11, 60
     mov x15, 1
     bl cuarto_elipse
 
+    // Elipse central
     mov x0, x20
     sub x11, x11, 30
     sub x12, x12, 45
     bl elipse
 
     ldr x30, [sp], #16
-
     ret
 
 drew_stan:
@@ -713,43 +715,30 @@ x_loop_rec:
 
 triangulo:
 
-    // Calcular stride (bytes por fila)
     mov x15, SCREEN_WIDTH
-    lsl x15, x15, 2              // stride = SCREEN_WIDTH * 4
+    lsl x15, x15, 2          // stride
 
-    mov x2, #0                   // fila actual (i = 0)
+    mov x2, #0               // fila actual
 
 y_loop_tr:
-    // y_actual = y_start + i
-    add x4, x12, x2
-    mul x4, x4, x15              // offset_y = y_actual * stride
+    add x4, x12, x2          // y_actual
+    mul x4, x4, x15          // offset_y
 
-    // cantidad de píxeles a pintar en esta fila = 2*i + 1
-    lsl x5, x2, 1                // x5 = 2*i
-    add x5, x5, #1               // x5 = 2*i + 1 (cantidad de columnas)
+    lsl x5, x2, 1
+    add x5, x5, #1           // columnas
 
-    // x_inicio = x_start - i
-    sub x6, x11, x2              // columna inicial
+    sub x6, x11, x2          // x_inicio
 
-    // loop interno por columnas
 x_loop_tr:
-    // x_actual = x_inicio
-    add x7, x6, #0
-    lsl x7, x7, 2                // offset_x = x_actual * 4
-
-    // Dirección: framebuffer + offset_y + offset_x
+    lsl x7, x6, 2
     add x8, x20, x4
     add x8, x8, x7
-
-    // Pintar píxel
     stur w10, [x8]
 
-    // Siguiente columna
     add x6, x6, #1
     sub x5, x5, #1
     cbnz x5, x_loop_tr
 
-    // Siguiente fila
     add x2, x2, #1
     cmp x2, x13
     blt y_loop_tr
@@ -1110,10 +1099,10 @@ pintar_pixel:
     add x26, x11, x1       // x_actual = xc + x
     lsl x26, x26, 2        // offset_x = x_actual * 4
 
-    add x27, x20, x25      // framebuffer + offset_y
-    add x27, x27, x26      // + offset_x
+    add x9, x20, x25       // framebuffer + offset_y
+    add x9, x9, x26        // + offset_x
 
-    stur w10, [x27]        // pintar pixel
+    stur w10, [x9]         // pintar pixel
 
 cuarto_elipse_y_next:
     add x2, x2, 1
@@ -1125,76 +1114,4 @@ cuarto_elipse_y_next:
     ble cuarto_elipse_x_loop
 
     ret 
-
-generar_copos:
-    stp x0, x1, [sp, #-16]!   // Guardar x0 y x1
-
-    mov x0, x20            // x0 = dirección base del framebuffer (pasada en x20)
-    mov x10, 0xFFFFFF      // x10 = color blanco (para los copos)
-    mov x13, 3             // x13 = radio del círculo (copos chicos)
-    mov x14, 0             // x14 = modo: 0 = círculo completo
-
-    mov x19, 0             // x19 = contador de copos generados
-    mov x21, 30            // x21 = cantidad total de copos que queremos generar
-
-    mov x17, 12345         // x17 = semilla pseudoaleatoria inicial
-
-    mov x26, #593          // x26 = número primo 1 (para dispersión en X)
-    mov x27, #37           // x27 = número primo 2 (para dispersión en Y)
-    mov x28, #97           // x28 = incremento de la semilla
-    mov x29, #2            // x29 = divisor para escalar valores a pantalla
-
-// ---------- Bucle principal que genera todos los copos ----------
-
-copos_loop:
-    // --------- Generar coordenada X pseudoaleatoria ---------
-    mov x22, x17           // x22 = copia de la semilla actual
-    mul x22, x22, x26      // x22 = x22 * 593 → dispersión
-    and x22, x22, #0x3FF   // x22 = x22 & 0x3FF → limitar a 10 bits (0–1023)
-    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–511
-    add x11, x22, #64      // x11 = x22 + 64 → ajusta a rango útil [64–575] para X
-
-    // --------- Generar coordenada Y pseudoaleatoria ---------
-    mul x22, x22, x27      // x22 = x22 * 37 → nueva dispersión
-    and x22, x22, #0xFF    // x22 = x22 & 0xFF → limitar a 8 bits (0–255)
-    udiv x22, x22, x29     // x22 = x22 / 2 → rango final: 0–127
-    add x12, x22, #10      // x12 = x22 + 10 → ajusta a [10–137] para Y
-
-// --------- Validación: evitar nube 1 → (200 ≤ x ≤ 260) y (65 ≤ y ≤ 155) ---------
-
-    cmp x11, #200
-    blt nube1_ok           // Si x < 200 → fuera de la nube → ok
-    cmp x11, #260
-    bgt nube1_ok           // Si x > 260 → fuera de la nube → ok
-    cmp x12, #65
-    blt nube1_ok           // Si y < 65 → fuera de la nube → ok
-    cmp x12, #155
-    bgt nube1_ok           // Si y > 155 → fuera de la nube → ok
-    b skip_copo            // Si está dentro de la nube → no pintar
-
-nube1_ok:
-    // --------- Validación: evitar nube 2 → (500 ≤ x ≤ 560) y (85 ≤ y ≤ 175) ---------
-
-    cmp x11, #500
-    blt nube2_ok
-    cmp x11, #560
-    bgt nube2_ok
-    cmp x12, #85
-    blt nube2_ok
-    cmp x12, #175
-    bgt nube2_ok
-    b skip_copo            // Está en la nube 2 → no pintar
-
-nube2_ok:
-    // --------- Si no está dentro de ninguna nube, dibujamos el copo ---------
-    bl circulo             // Llamar a función circulo con (x0, color, x11, x12, radio, modo)
-    add x19, x19, #1       // x19 = x19 + 1 → contador de copos++
-
-skip_copo:
-    add x17, x17, x28      // x17 = x17 + 97 → avanzar semilla
-    cmp x19, x21           // ¿Ya se generaron 30 copos?
-    blt copos_loop         // Si no, seguir generando
-
-    ldp x0, x1, [sp], #16
-
-    ret
+    

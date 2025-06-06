@@ -355,12 +355,21 @@ loop0:
     // Inicializar variables
     mov x29, #0     // X inicia de la nube
 
+    mov x28, #300       // Posición inicial nube 2 (empieza a la derecha)
+    mov x27, #-1        // Dirección inicial: -1 (va hacia la izquierda)
+
 loop_animar:
 
     // Dibujar nube
     mov x0, x20
     mov x11, x29
     mov x12, 60
+    bl nube
+
+    // Dibujar nube 2
+    mov x0, x20
+    mov x11, x28
+    mov x12, #160         // altura más abajo
     bl nube
 
     // Delay simple          AVISO CAMBIAR X16 PARA CAMBIAR LA VELOCIDAD DE LA ANIMACION
@@ -375,19 +384,10 @@ delay_loop:
     mov x12, 60
     bl nube_borra
 
-  //Nube 1
-    mov x0, x20
-    mov x11, 200
-    mov x12, 65
-    bl nube
-
-//Nube 2
-    mov x0, x20
-    mov x11, 500
-    mov x12, 85
-    bl nube
-
-
+    // Borrar nube 2
+    mov x11, x28
+    mov x12, #160
+    bl nube_borra
 
     //Nieve en la montaña 2
     mov x0, x20
@@ -400,6 +400,22 @@ delay_loop:
 
     // Calcular nueva posición
     add x29, x29, 1
+
+    // Mover nube 2
+    add x28, x28, x27
+
+    // control de rebote
+    cmp x28, #250
+    b.ge check_derecha
+    mov x27, #1
+    b after_check
+
+    check_derecha:
+    cmp x28, #525
+    b.le after_check
+    mov x27, #-1
+
+    after_check:
 
     bl loop_animar
 
