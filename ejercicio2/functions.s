@@ -7,8 +7,8 @@
 .global triangulo
 .global rectangulo
 .global rombo
-.global drew_stan
-.global drew_wendy
+.global dibujar_stan
+.global dibujar_wendy
 .global generar_copos
 .global circulo
 .global elipse
@@ -47,7 +47,7 @@ nube:
     sub x12, x12, 45
     bl elipse
 
-    ldr x30, [sp], #16
+    ldr x30, [sp], #16          // restaura el link register 
     ret
     
 nube_borra:
@@ -82,7 +82,7 @@ nube_borra:
     ldr x30, [sp], #16
     ret
 
-drew_stan:
+dibujar_stan:
     str x30, [sp, #-16]!    // guarda el link register en stack
 
 //ABRIGO (chaqueta roja)
@@ -332,7 +332,7 @@ drew_stan:
     ldr x30, [sp], #16      // restaura Link register
     ret
 
-drew_wendy:
+dibujar_wendy:
     str x30, [sp, #-16]!    // guarda el link register en stack
 
 // Pelo 
