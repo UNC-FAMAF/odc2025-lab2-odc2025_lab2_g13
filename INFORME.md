@@ -9,7 +9,7 @@ Descripción ejercicio 1:
 Stan y Wendy de la serie South Park se encuentran de dia al lado de un cartel en la calle, con un ambiente nevado y montañas nevadas de fondo, se encuentran nubes en el mismo con copos de nieve en el cielo. 
 
 Descripción ejercicio 2:
-Stan y Wendy ahora se encuentran en el mismo fondo del ejercicio 1, pero ahora las nubes son grises y se mueven de izquierda a derecha y viceversa, notar que la nube de mas arriba sobrepasa la punta de la montaña mas grande al moverse. 
+Stan y Wendy ahora se encuentran en el mismo fondo del ejercicio 1, pero ahora las nubes son grises y se mueven de izquierda a derecha y viceversa, la nube de mas arriba sobrepasa la punta de la montaña mas grande al moverse. 
 
 Justificación instrucciones ARMv8:
 
