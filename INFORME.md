@@ -16,7 +16,7 @@ Justificación instrucciones ARMv8:
 INSTRUCCIONES QUE NO SE ENCUENTRAN EN LA GREENCARD DE LEGv8 pero si en ARMv8: 
 (Usaremos los registros x1 y x2 como ejemplo)   
 
-neg: Niega el registro x2 y guarda el mismo en el registro x1, al igual que CMP, NEG es otra pseudoinstruccion, la cual es mov, hacer por ejemplo NEG x1, x13 es el equivalente a hacer NEG x1, -x13. 
+neg: Niega el registro x2 y guarda el mismo en el registro x1, al igual que CMP, NEG es otra pseudoinstruccion, la cual es sub, hacer por ejemplo NEG x1, x13 es el equivalente a hacer  SUB x1, xzr, x13.  
 En el programa fue utilizado para realizar desplazamientos desde el centro de una figura, por ejemplo, en la funcion circulo.
 
 sp (Stack Pointer): Como su nombre lo dice, es el puntero a una pila, mas especificamente apunta al tope de la misma, es muy util para guardar y recuperar datos temporales cuando se llaman otras funciones. Es fundamental para la llamada funciones como dibujar_stan, dibujar_wendy y nube, pues preserva el contenido de x30. Esto ayuda mucho a que al volver de una funcion el programa siga funcionando correctamente.
